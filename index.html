@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.011</title>
+<title>Can't Stop Ver.0112</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1129,41 +1129,40 @@ function canAdvance(col, runners, columns, pid) {
 
 function computeClickable(dice, runners, columns, pid, selectedThisRoll) {
   const sel = (selectedThisRoll || []).map(Number);
-  if (sel.length >= 2) return []; // 이번 굴리기에 이미 2개를 다 골랐으면 끝
+  if (sel.length >= 2) return []; 
   
   const selSet = new Set(sel);
   const available = new Map();
-  const currentRunnerCount = Object.keys(runners).length;
+  const currentRunners = Object.keys(runners || {}).map(Number);
+  const runnerCount = currentRunners.length;
 
   getPairs(dice).forEach(({x, y}) => {
-    // 1. 첫 번째 선택 단계
-    if (sel.length === 0) {
-      const okX = canAdvance(x, runners, columns, pid);
-      const okY = canAdvance(y, runners, columns, pid);
+    // x와 y 각각 전진 가능 여부 판정
+    // 판정 기준: 1. 이미 정복된 열이 아님 / 2. 이미 내 말이 있는 열이거나, 아직 러너 여유(3개 미만)가 있음
+    const canX = canAdvance(x, runners, columns, pid);
+    const canY = canAdvance(y, runners, columns, pid);
 
-      // 더블(x==y)인 경우: 2칸 전진이 가능한지 별도 체크
+    if (sel.length === 0) {
+      // 첫 번째 선택 단계
       if (x === y) {
-        if (okX) available.set(x, 2); 
+        // 주사위 두 쌍의 합이 같은 경우 (예: 4,4 / 4,4 -> 8, 8)
+        if (canX) {
+          // 2칸 전진이 가능한지 확인 (남은 칸이 2칸 이상이어야 함)
+          const curPos = runners[x] !== undefined ? runners[x] : (columns[x]?.positions?.[pid] || 0);
+          const size = COL_SIZES[x];
+          if (curPos + 1 < size) available.set(x, 2); 
+          else available.set(x, 1);
+        }
       } else {
-        // 일반적인 경우: x나 y 각각 전진 가능한지 체크
-        if (okX) available.set(x, 1);
-        if (okY) available.set(y, 1);
+        // 일반적인 경우
+        if (canX) available.set(x, 1);
+        if (canY) available.set(y, 1);
       }
-    } 
-    // 2. 이미 하나를 고른 후 두 번째 선택 단계 (연쇄 전진 가능 여부)
-    else {
-      const firstChoice = sel[0];
-      // 방금 고른 것(x)과 짝꿍(y)이 전진 가능한지 확인
-      if (x === firstChoice) {
-        if (canAdvance(y, runners, columns, pid)) {
-          available.set(y, 1);
-        }
-      }
-      if (y === firstChoice) {
-        if (canAdvance(x, runners, columns, pid)) {
-          available.set(x, 1);
-        }
-      }
+    } else {
+      // 이미 하나(sel[0])를 클릭한 상태에서 두 번째 클릭 가능한 숫자 계산
+      const first = sel[0];
+      if (x === first && canY) available.set(y, 1);
+      if (y === first && canX) available.set(x, 1);
     }
   });
 
