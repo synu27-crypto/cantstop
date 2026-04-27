@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.012</title>
+<title>Can't Stop Ver.0111</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
 
@@ -136,16 +136,80 @@ input[type="text"]:focus{border-color:var(--gold);}
 /* right panel (log + chat) */
 .right-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:8px;overflow:hidden;}
 .log-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;}
-.log-item{font-size:10.5px;color:var(--muted);padding:2.5px 0;border-bottom:1px solid rgba(255,255,255,.03);}
+
+/* [수정] 로그 아이템 폰트 크기 대폭 확대 (2번 항목) */
+.log-item {
+  font-size: 14px; /* 기존 10.5px에서 확대 [cite: 21, 400, 404] */
+  line-height: 1.5;
+  color: var(--muted);
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
 .log-item b{color:var(--text);}
 .log-item.ev-bust b{color:var(--p1);}
 .log-item.ev-capture b{color:var(--gold);}
 .log-sep{height:1px;background:var(--border2);margin:4px 0;flex-shrink:0;}
-.chat-input-row{display:flex;gap:6px;flex-shrink:0;}
-.chat-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;outline:none;transition:border-color .2s;}
-.chat-input:focus{border-color:var(--gold);}
-.chat-send{padding:8px 12px;background:var(--gold);border:none;border-radius:8px;color:#0d0c0a;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;cursor:pointer;transition:background .2s;}
-.chat-send:hover{background:var(--gold2);}
+
+/* [추가] 플레이어 정보 가독성 향상 (2번 항목) */
+.p-name {
+  font-weight: 600;
+  font-size: 16px; /* 이름 크기 확대  */
+  margin-bottom: 4px;
+}
+.p-score {
+  font-size: 13px; /* 점수 정보 확대  */
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+/* [추가] 주사위 메시지 및 힌트 확대 (2번 항목) */
+.dice-msg {
+  font-size: 16px; /* 메시지 크기 확대  */
+  color: var(--text);
+  font-weight: 600;
+}
+.dice-hint {
+  font-size: 13px; /* 힌트 크기 확대  */
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+/* 1번 항목: 채팅 입력 영역 정밀 수정 (유지) */
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.chat-input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; /* 입력창 폰트 확대 [cite: 397] */
+  outline: none;
+  transition: border-color .2s;
+}
+
+.chat-send {
+  flex-shrink: 0;
+  min-width: 60px;
+  padding: 10px 16px;
+  background: var(--gold);
+  border: none;
+  border-radius: 8px;
+  color: #0d0c0a;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px; /* 버튼 글자 확대 [cite: 397] */
+  letter-spacing: 1px;
+  cursor: pointer;
+  white-space: nowrap; /* 줄바꿈 방지 [cite: 401] */
+  transition: background .2s;
+}
 
 /* dice section */
 .dice-section{grid-column:1/-1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
