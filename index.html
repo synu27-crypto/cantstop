@@ -730,7 +730,7 @@ input[type="text"]:focus{border-color:var(--gold);}
   </div>
   <div class="winner-btns">
     <button class="btn-rematch" onclick="rematch()">재대결</button>
-    <button class="btn-lobby" onclick="location.reload()">로비로</button>
+    <button class="btn-lobby" onclick="exitToLobby()">로비로</button>
   </div>
 </div>
 
@@ -1726,6 +1726,29 @@ window.addEventListener('load',async()=>{
     }
   }
 });
+
+async function exitToLobby() {
+  try {
+    // 1. 방장일 경우 서버의 방 상태를 'waiting'으로 되돌려 승자 정보 삭제
+    if (localGame && localGame.host === myId) {
+      await update(ref(db, 'rooms/' + roomCode), {
+        status: 'waiting',
+        game: null
+      });
+    }
+  } catch (e) {
+    console.error("방 초기화 실패:", e);
+  } finally {
+    // 2. 브라우저 로컬 저장소의 세션 데이터 삭제 (자동 재접속 방지)
+    localStorage.removeItem('cantstop_session');
+    
+    // 3. 페이지를 새로고침하여 로비 화면으로 이동
+    location.reload(); 
+  }
+}
+
+window.exitToLobby = exitToLobby;
+
 </script>
 </body>
 </html>
