@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.013</title>
+<title>Can't Stop Ver.011</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
 
@@ -283,17 +283,16 @@ input[type="text"]:focus{border-color:var(--gold);}
 <div id="toast"></div>
 
 <script type="module">
+// 1. 라이브러리 로드
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, update, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-//  ★ Firebase 설정을 여기에 붙여넣으세요 ★
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 2. Firebase 설정 (제공해주신 값)
 const firebaseConfig = {
   apiKey: "AIzaSyCh23cdVpNM-dIN2KTqv4pe9-YrVs-fSXQ",
   authDomain: "can-t-stop-11645.firebaseapp.com",
-  databaseURL: "https://can-t-stop-11645-default-rtdb.firebaseio.com", 
+  databaseURL: "https://can-t-stop-11645-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "can-t-stop-11645",
   storageBucket: "can-t-stop-11645.firebasestorage.app",
   messagingSenderId: "571023864530",
@@ -301,10 +300,9 @@ const firebaseConfig = {
   measurementId: "G-TJB19RKC36"
 };
 
-// 초기화
+// 3. 인스턴스 초기화
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const analytics = getAnalytics(app); // 이제 정의 에러가 사라집니다.
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 // ── 상수 ──
@@ -420,7 +418,6 @@ async function createRoom(){
   });
   document.getElementById('display-code').textContent=roomCode;
   document.getElementById('game-room-code').textContent=roomCode;
-  switchTab('waiting'); listenRoom();
 }
 window.createRoom=createRoom;
 
@@ -1008,6 +1005,18 @@ function toast(msg){
   el.textContent=msg; el.classList.add('show');
   setTimeout(()=>el.classList.remove('show'),2500);
 }
+
+// 주요 함수들을 브라우저 전역 객체(window)에 등록
+window.switchTab = switchTab;
+window.createRoom = createRoom;
+window.joinRoom = joinRoom;
+window.selectCount = selectCount;
+window.startGame = startGame;
+window.sendChat = sendChat;
+window.stopTurn = stopTurn;
+window.rollDice = rollDice;
+window.rematch = rematch;
+
 </script>
 </body>
 </html>
