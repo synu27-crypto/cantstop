@@ -3,24 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.012</title>
+<title>Can't Stop Ver.011</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
 
 <style>
 :root {
-  --bg:#0d0c0a; --surface:#181714; --surface2:#211f1c; --surface3:#2a2825;
-  --border:#2e2b26; --border2:#3d3a34;
-  --gold:#d4a843; --gold2:#f0c96a; --gold3:#a07830;
-  --cream:#f5efe0; --text:#e8dfc8; --muted:#7a7060; --muted2:#504840;
-  --p1:#e84040; --p2:#3a8fe8; --p3:#2db87a; --p4:#e8a020;
-  --p1d:#8a1010; --p2d:#1050a0; --p3d:#106040; --p4d:#905010;
-  --runner:#ffffff;
-  --radius:16px;
+  --bg: #0d0c0a;
+  --surface: #181714;
+  --surface2: #211f1c;
+  --border: #2e2b26;
+  --gold: #d4a843;
+  --gold-glow: rgba(212, 168, 67, 0.35);
+  --radius: 12px;
+  --text: #e8dfc8; /* 누락된 텍스트 색상 추가 */
+  --muted: #7a7060;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;overflow:hidden;}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;height:100%;}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg);
+  /* 고급스러운 은은한 조명 효과 */
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(212, 168, 67, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(232, 64, 64, 0.03) 0%, transparent 40%);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ─── [추가] 방장 관리 기능 전용 스타일 ─── */
+.kick-btn {
+  background: #e84040;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  margin-left: 8px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: opacity 0.2s;
+}
+.kick-btn:hover { opacity: 0.8; }
+
+.btn-admin {
+  flex: 1;
+  padding: 8px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
 
 /* ─── BUST EFFECT ─── */
 @keyframes bustShake{0%{transform:translate(0,0);}10%{transform:translate(-8px,4px);}20%{transform:translate(8px,-4px);}30%{transform:translate(-6px,6px);}40%{transform:translate(6px,-6px);}50%{transform:translate(-4px,4px);}60%{transform:translate(4px,-4px);}70%{transform:translate(-2px,2px);}80%{transform:translate(2px,-2px);}90%{transform:translate(-1px,1px);}100%{transform:translate(0,0);}}
@@ -107,16 +144,54 @@ input[type="text"]:focus{border-color:var(--gold);}
 .captured-cols{display:flex;flex-wrap:wrap;gap:3px;}
 .col-badge{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#0d0c0a;}
 
-/* board */
-.board-wrap{display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.board{display:flex;gap:3px;align-items:flex-end;padding:16px 14px 10px;background:var(--surface);border:1px solid var(--border);border-radius:18px;position:relative;}
-.column{display:flex;flex-direction:column;align-items:center;gap:2.5px;}
+/* [수정] 보드 레이아웃 및 입체 효과 */
+.board {
+  background: var(--surface); /* [cite: 437] */
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); /*  */
+  padding: 24px;
+  border-radius: 20px;
+  display: flex;
+  gap: 3px;
+  align-items: flex-end;
+  position: relative;
+}
 
-/* cells */
-.cell{border-radius:50%;background:var(--bg);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s,border-color .2s,box-shadow .2s;flex-shrink:0;}
-.cell.top-cell{border-color:var(--gold);background:rgba(212,168,67,.07);}
-.cell.has-runner{border-color:rgba(255,255,255,.7);background:rgba(255,255,255,.07);box-shadow:0 0 8px rgba(255,255,255,.2);}
-.cell.captured-cell{border-color:transparent;}
+/* [수정] 셀(칸)의 현대적 디자인 및 애니메이션 */
+.cell {
+  background: var(--bg); /* [cite: 437] */
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /*  */
+  flex-shrink: 0;
+}
+
+/* [수정] 러너가 있는 셀의 발광 효과 */
+.cell.has-runner {
+  border-color: #fff;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); /*  */
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* [수정] 하단 열 번호 스타일 */
+.col-num {
+  font-family: 'Bebas Neue', sans-serif; /* [cite: 434] */
+  letter-spacing: 1px;
+  color: var(--muted);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  user-select: none;
+  cursor: default;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
 
 /* pegs */
 .peg-wrap{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;align-items:center;width:100%;height:100%;padding:2px;}
@@ -219,14 +294,38 @@ input[type="text"]:focus{border-color:var(--gold);}
   background: var(--gold2);
 }
 
-/* dice section */
-.dice-section{grid-column:1/-1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
-.dice-row{display:flex;gap:9px;align-items:center;}
+/* [수정] 주사위 섹션 배경 및 블러 효과 */
+.dice-section {
+  grid-column: 1/-1;
+  background: var(--surface); /* [cite: 437] */
+  border-top: 1px solid var(--border);
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  backdrop-filter: blur(10px); /* [cite: 434] */
+}
 
-/* die */
-.die{border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;color:#1a1816;box-shadow:0 4px 10px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -2px 0 rgba(0,0,0,.15);background:var(--cream);position:relative;transition:transform .1s;flex-shrink:0;}
-.die.rolling{animation:dieRoll .42s cubic-bezier(.36,.07,.19,.97);}
-@keyframes dieRoll{0%{transform:rotate(0)scale(1);}20%{transform:rotate(-18deg)scale(.92);}45%{transform:rotate(14deg)scale(1.08);}70%{transform:rotate(-8deg)scale(.96);}100%{transform:rotate(0)scale(1);}}
+/* [수정] 주사위 개별 디자인 및 그림자 */
+.die {
+  background: var(--cream); /* [cite: 434] */
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  color: #1a1816;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /*  */
+  position: relative;
+  transition: transform 0.1s;
+  flex-shrink: 0;
+}
+
+/* [수정] 주사위 굴리기 애니메이션 속도 최적화 */
+.die.rolling {
+  animation: dieRoll 0.4s infinite; /*  */
+}
 
 /* dice info */
 .dice-info{flex:1;min-width:140px;}
@@ -373,9 +472,14 @@ input[type="text"]:focus{border-color:var(--gold);}
         <div class="dice-hint" id="dice-hint"></div>
       </div>
       <div class="action-btns">
-        <button class="btn-stop" id="btn-stop" onclick="stopTurn()" disabled>멈추기</button>
-        <button class="btn-roll" id="btn-roll" onclick="rollDice()" disabled>굴리기</button>
-      </div>
+  <button class="btn-stop" id="btn-stop" onclick="stopTurn()" disabled>멈추기</button>
+  <button class="btn-roll" id="btn-roll" onclick="rollDice()" disabled>굴리기</button>
+</div>
+
+<div id="admin-panel" style="display:none; width:100%; margin-top:10px; gap:8px;">
+  <button class="btn-admin" onclick="forceSkipTurn()" style="background:#444; color:#eee; border:1px solid #555; padding:6px 12px; border-radius:6px; cursor:pointer; flex:1;">턴 강제 넘기기</button>
+  <button class="btn-admin" onclick="resetRoom()" style="background:#622; color:#eee; border:1px solid #844; padding:6px 12px; border-radius:6px; cursor:pointer; flex:1;">방 리셋</button>
+</div>
     </div>
   </div>
 </div>
@@ -1062,6 +1166,10 @@ function renderPlayers(g){
   const list=document.getElementById('player-list');
   list.innerHTML='';
   const cid=g.playerOrder[g.currentTurnIndex];
+
+  // [추가] 방장 권한 확인을 위해 현재 방 데이터를 가져오는 로직이 필요할 수 있습니다.
+  // 여기서는 로컬 상태(localGame)나 서버 데이터를 참조한다고 가정합니다.
+
   g.playerOrder.forEach(pid=>{
     const p=g.players[pid];
     const c=P_COLORS[p.colorIndex];
@@ -1070,12 +1178,25 @@ function renderPlayers(g){
     card.className='player-card'+(pid===cid?' active':'');
     card.style.color=`var(${c})`;
     const meBadge=pid===myId?`<span class="p-me-badge">나</span>`:'';
-    card.innerHTML=`
-      <div class="p-name">${p.name}${meBadge}</div>
+
+    // ─── [수정 및 추가] 방장 전용 강퇴 버튼 ───
+    // 내가 방장이고, 이 카드의 주인공이 내가 아닐 때만 버튼 노출
+    const isHost = localGame.host === myId; // 방장 여부 확인 (전역 변수 활용)
+    const kickBtn = (isHost && pid !== myId) 
+      ? `<button class="kick-btn" onclick="kickPlayer('${pid}')">강퇴</button>` 
+      : '';
+
+    card.innerHTML = `
+      <div class="p-name">
+        ${p.name}${meBadge}
+        ${kickBtn} 
+      </div>
       <div class="p-score">${captured.length} / ${WIN_COLS} 열 정복</div>
       <div class="captured-cols">
         ${captured.map(col=>`<div class="col-badge" style="background:var(${c})">${col}</div>`).join('')}
       </div>`;
+    // ──────────────────────────────────────────
+
     list.appendChild(card);
   });
 }
@@ -1159,6 +1280,38 @@ window.sendChat = sendChat;
 window.stopTurn = stopTurn;
 window.rollDice = rollDice;
 window.rematch = rematch;
+
+// 1. 강제 턴 넘기기
+async function forceSkipTurn() {
+  if (!confirm('현재 플레이어의 턴을 강제로 넘기시겠습니까?')) return;
+  await bustTurn(); // 전진 기록 삭제 후 다음 차례로 이동
+  toast('방장에 의해 턴이 넘어갔습니다');
+}
+
+// 2. 플레이어 강퇴
+async function kickPlayer(targetId) {
+  if (!confirm('이 플레이어를 강퇴하시겠습니까?')) return;
+  await set(ref(db, `rooms/${roomCode}/players/${targetId}`), null);
+  toast('플레이어를 강퇴했습니다');
+}
+
+// 3. 방 리셋
+async function resetRoom() {
+  if (!confirm('게임을 중단하고 모든 플레이어를 대기실로 보낼까요?')) return;
+  await update(ref(db, 'rooms/' + roomCode), {
+    status: 'waiting',
+    game: null
+  });
+  toast('방이 초기화되었습니다');
+}
+
+// 전역 등록 (HTML onclick 연결용)
+window.forceSkipTurn = forceSkipTurn;
+window.kickPlayer = kickPlayer;
+window.resetRoom = resetRoom;
+
+// [보완] 리스너 내 방장 버튼 노출 제어 (listenRoom 함수 내부 적절한 곳에 추가)
+// if (room.host === myId) document.getElementById('admin-panel').style.display = 'flex';
 
 window.addEventListener('load', async () => {
   const session = localStorage.getItem('cantstop_session');
