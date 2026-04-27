@@ -563,24 +563,33 @@ function getPairs(dice){
 
 /**
  * 이 열에 러너를 전진시킬 수 있는지 검사
- * - 열 범위 확인
- * - 누군가 이미 정복한 열이면 불가 (본인 포함)
- * - 최대 칸 초과 여부 검사 (러너 + 1 이 size 초과 불가)
- * - 러너 슬롯 여유 확인
+ * - 열 범위 확인 (2~12)
+ * - 이미 정복된 열(captured)인지 확인
+ * - 이미 꼭대기(size)에 도달했는지 확인
+ * - 새로운 러너가 필요한 경우 슬롯 여유 확인
  */
 function canAdvance(col, runners, columns, myId){
-  col=parseInt(col);
-  if(col<2||col>12) return false;
-  const cd=columns[col]||{positions:{},captured:null};
-  // 이미 정복된 열 (누구든) → 불가
+  col = parseInt(col);
+  if(col < 2 || col > 12) return false;
+
+  const cd = columns[col] || {positions:{}, captured:null};
+
+  // 1. 이미 누군가(자신 포함) 정복한 열이면 더 이상 전진 불가 [cite: 216, 217]
   if(cd.captured) return false;
-  const size=COL_SIZES[col];
-  // 현재 러너 위치 또는 내 영구 위치
-  const curPos= runners[col]!==undefined ? runners[col] : (cd.positions?.[myId]||0);
-  // 다음 칸이 최대 칸을 초과하면 불가
-  if(curPos+1 > size) return false;
-  // 이미 이 열에 러너가 있으면 슬롯 불필요
-  if(runners[col]!==undefined) return true;
+
+  const size = COL_SIZES[col];
+
+  // 2. 현재 러너의 위치 또는 내 영구 위치를 확인
+  const curPos = runners[col] !== undefined ? runners[col] : (cd.positions?.[myId] || 0);
+
+  // 3. ★핵심 수정★: 이미 꼭대기에 도달해 있다면 더 이상 전진 불가 
+  // 이전 로직(curPos + 1 > size)을 더 명확하게 하여 버스트 판정을 돕습니다.
+  if(curPos >= size) return false;
+
+  // 4. 이미 이 열에 러너가 있다면 다음 칸으로 전진 가능
+  if(runners[col] !== undefined) return true;
+
+  // 5. 새로운 열에 진입해야 하는 경우, 사용 중인 러너가 3개 미만이어야 함 [cite: 213, 214]
   return Object.keys(runners).length < MAX_RUNNERS;
 }
 
