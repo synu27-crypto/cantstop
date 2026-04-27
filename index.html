@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.01</title>
+<title>Can't Stop Ver.012</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1115,27 +1115,47 @@ function canAdvance(col,runners,columns,pid){
   return Object.keys(runners).length<MAX_RUNNERS;
 }
 
-function computeClickable(dice,runners,columns,pid,selectedThisRoll){
-  const sel=(selectedThisRoll||[]).map(Number);
-  if(sel.length>=2) return [];
-  const selSet=new Set(sel);
-  const available=new Map();
-  getPairs(dice).forEach(({x,y})=>{
-    const okX=canAdvance(x,runners,columns,pid);
-    const okY=canAdvance(y,runners,columns,pid);
-    if(sel.length===1){
-      if(selSet.has(x)&&okY) available.set(y,(available.get(y)||0)+1);
-      if(selSet.has(y)&&okX) available.set(x,(available.get(x)||0)+1);
-    } else {
-      if(x===y){
-        if(okX) available.set(x,Math.max(available.get(x)||0,2));
+function computeClickable(dice, runners, columns, pid, selectedThisRoll) {
+  const sel = (selectedThisRoll || []).map(Number);
+  if (sel.length >= 2) return []; // 이번 굴리기에 이미 2개를 다 골랐으면 끝
+  
+  const selSet = new Set(sel);
+  const available = new Map();
+  const currentRunnerCount = Object.keys(runners).length;
+
+  getPairs(dice).forEach(({x, y}) => {
+    // 1. 첫 번째 선택 단계
+    if (sel.length === 0) {
+      const okX = canAdvance(x, runners, columns, pid);
+      const okY = canAdvance(y, runners, columns, pid);
+
+      // 더블(x==y)인 경우: 2칸 전진이 가능한지 별도 체크
+      if (x === y) {
+        if (okX) available.set(x, 2); 
       } else {
-        if(okX) available.set(x,Math.max(available.get(x)||0,1));
-        if(okY) available.set(y,Math.max(available.get(y)||0,1));
+        // 일반적인 경우: x나 y 각각 전진 가능한지 체크
+        if (okX) available.set(x, 1);
+        if (okY) available.set(y, 1);
+      }
+    } 
+    // 2. 이미 하나를 고른 후 두 번째 선택 단계 (연쇄 전진 가능 여부)
+    else {
+      const firstChoice = sel[0];
+      // 방금 고른 것(x)과 짝꿍(y)이 전진 가능한지 확인
+      if (x === firstChoice) {
+        if (canAdvance(y, runners, columns, pid)) {
+          available.set(y, 1);
+        }
+      }
+      if (y === firstChoice) {
+        if (canAdvance(x, runners, columns, pid)) {
+          available.set(x, 1);
+        }
       }
     }
   });
-  return [...available.entries()].map(([col,adv])=>({col,adv}));
+
+  return [...available.entries()].map(([col, adv]) => ({col, adv}));
 }
 
 function isBustRoll(dice,runners,columns,pid){
