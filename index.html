@@ -977,55 +977,68 @@ function renderLog(g){
   chatItems.forEach(c=>list.appendChild(c));
 }
 
-// ── 리얼타임 연결 ──
-let chatListening=false;
-onValue(ref(db,'rooms/'+roomCode||'__none__'),()=>{});  // dummy prevent error
+let chatListening = false; // 채팅 중복 연결 방지용 변수
 
-// listenRoom은 위에서 정의. 게임 진입 시 채팅도 연결
-const _origLR=listenRoom;
-
-function listenRoom(){
-  onValue(ref(db,'rooms/'+roomCode),snap=>{
-    if(!snap.exists()) return;
-    const room=snap.val();
-    if(room.status==='playing'){
-      document.getElementById('lobby').style.display='none';
-      document.getElementById('game').style.display='block';
+function listenRoom() {
+  onValue(ref(db, 'rooms/' + roomCode), snap => {
+    if (!snap.exists()) return;
+    const room = snap.val();
+    
+    // 게임 시작 상태일 때
+    if (room.status === 'playing') {
+      document.getElementById('lobby').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
       computeSizes();
       renderGame(room);
-      if(!chatListening){
-        chatListening=true;
+      
+      // 채팅 리스너가 없을 때만 연결
+      if (!chatListening) {
+        chatListening = true;
         listenChat();
       }
       return;
     }
-    if(room.status==='waiting'){
+    
+    // 게임 대기 상태일 때
+    if (room.status === 'waiting') {
       document.getElementById('winner-overlay').classList.remove('show');
-      document.getElementById('game').style.display='none';
-      document.getElementById('lobby').style.display='flex';
-      chatListening=false;
+      document.getElementById('game').style.display = 'none';
+      document.getElementById('lobby').style.display = 'flex';
+      chatListening = false;
       switchTab('waiting');
     }
-    const players=Object.values(room.players||{});
-    const isHost=room.host===myId;
-    const wp=document.getElementById('waiting-players'); wp.innerHTML='';
-    for(let i=0;i<room.maxPlayers;i++){
-      const p=players[i];
-      const slot=document.createElement('div');
-      slot.className='player-slot'+(p?'':' empty');
-      const dot=document.createElement('div'); dot.className='player-dot';
-      if(p) dot.style.background=`var(${P_COLORS[i]})`;
-      const nm=document.createElement('span'); nm.style.fontSize='13px';
-      nm.textContent=p?p.name:'대기 중...'; if(!p) nm.style.color='var(--muted)';
-      slot.appendChild(dot); slot.appendChild(nm); wp.appendChild(slot);
+    
+    // 대기실 플레이어 목록 렌더링
+    const players = Object.values(room.players || {});
+    const isHost = room.host === myId;
+    const wp = document.getElementById('waiting-players'); 
+    wp.innerHTML = '';
+    
+    for (let i = 0; i < room.maxPlayers; i++) {
+      const p = players[i];
+      const slot = document.createElement('div');
+      slot.className = 'player-slot' + (p ? '' : ' empty');
+      const dot = document.createElement('div'); 
+      dot.className = 'player-dot';
+      if (p) dot.style.background = `var(${P_COLORS[i]})`;
+      const nm = document.createElement('span'); 
+      nm.style.fontSize = '13px';
+      nm.textContent = p ? p.name : '대기 중...'; 
+      if (!p) nm.style.color = 'var(--muted)';
+      slot.appendChild(dot); 
+      slot.appendChild(nm); 
+      wp.appendChild(slot);
     }
-    const sb=document.getElementById('start-btn');
-    if(isHost){
-      sb.style.display=''; sb.disabled=players.length<2;
-      document.getElementById('waiting-msg').textContent=players.length<2?'최소 2명이 필요합니다':'게임을 시작할 수 있습니다';
-    }else{
-      sb.style.display='none';
-      document.getElementById('waiting-msg').textContent='호스트가 시작하길 기다리는 중...';
+    
+    // 호스트 권한 제어
+    const sb = document.getElementById('start-btn');
+    if (isHost) {
+      sb.style.display = ''; 
+      sb.disabled = players.length < 2;
+      document.getElementById('waiting-msg').textContent = players.length < 2 ? '최소 2명이 필요합니다' : '게임을 시작할 수 있습니다';
+    } else {
+      sb.style.display = 'none';
+      document.getElementById('waiting-msg').textContent = '호스트가 시작하길 기다리는 중...';
     }
   });
 }
