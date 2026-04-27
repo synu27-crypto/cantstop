@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.0111</title>
+<title>Can't Stop Ver.011</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
 
@@ -174,41 +174,49 @@ input[type="text"]:focus{border-color:var(--gold);}
   margin-top: 5px;
 }
 
-/* 1번 항목: 채팅 입력 영역 정밀 수정 (유지) */
+/* 채팅 입력 영역: 버튼이 사라지지 않도록 정밀 교정 */
 .chat-input-row {
   display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-  align-items: center;
+  gap: 8px; /* 입력창과 버튼 사이 간격 */
+  width: 100%; /* 전체 너비 사용 */
+  padding: 4px 0;
+  box-sizing: border-box;
+  align-items: stretch; /* 입력창과 버튼 높이 통일 */
 }
 
 .chat-input {
-  flex: 1;
+  flex: 1; /* 남은 공간을 모두 차지 */
+  min-width: 0; /* flex 레이아웃 내에서 찌그러짐 방지 */
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px 12px;
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
-  font-size: 15px; /* 입력창 폰트 확대 [cite: 397] */
+  font-size: 15px;
   outline: none;
   transition: border-color .2s;
 }
 
 .chat-send {
-  flex-shrink: 0;
-  min-width: 60px;
-  padding: 10px 16px;
+  flex: 0 0 70px; /* ★중요: 버튼 너비를 70px로 강력하게 고정 */
   background: var(--gold);
   border: none;
   border-radius: 8px;
   color: #0d0c0a;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 16px; /* 버튼 글자 확대 [cite: 397] */
+  font-size: 16px;
   letter-spacing: 1px;
   cursor: pointer;
-  white-space: nowrap; /* 줄바꿈 방지 [cite: 401] */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap; /* 글자 줄바꿈 방지 */
   transition: background .2s;
+}
+
+.chat-send:hover {
+  background: var(--gold2);
 }
 
 /* dice section */
