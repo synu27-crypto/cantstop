@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.012</title>
+<title>Can't Stop Ver.011</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
 
@@ -754,12 +754,18 @@ async function bustTurn(){
   if(!localGame) return;
   const g=localGame;
   if(g.playerOrder[g.currentTurnIndex]!==myId) return;
+
   const nextIndex=(g.currentTurnIndex+1)%g.playerOrder.length;
+  // 버스트는 전진 기록을 모두 날리고 '버스트'라고 로그를 남깁니다.
   const logEntry=`<b>${g.players[myId].name}</b> 버스트 — 진행 취소`;
+
   await update(ref(db,'rooms/'+roomCode+'/game'),{
-    runners:{},clickableColumns:[],selectedThisRoll:[],
-    phase:'roll',dice:[0,0,0,0],
-    currentTurnIndex:nextIndex,
+    runners:{}, // 러너(임시 위치) 초기화
+    clickableColumns:[],
+    selectedThisRoll:[],
+    phase:'roll',
+    dice:[0,0,0,0],
+    currentTurnIndex:nextIndex, // 다음 사람으로 턴 넘김
     log:[...(g.log||[]),logEntry]
   });
 }
@@ -972,9 +978,12 @@ function renderDiceUI(g){
     msg.textContent='주사위를 굴리세요';
     hint.textContent=Object.keys(g.runners||{}).length>0?'멈추면 현재 위치가 저장됩니다':'첫 굴리기';
   } else if(g.phase==='choose'){
-    rollBtn.disabled=true; stopBtn.disabled=true;
-    const clickable=g.clickableColumns||[];
-    const sel=g.selectedThisRoll||[];
+    rollBtn.disabled=true; 
+    // 선택 단계에서도 이미 보드에 러너가 하나라도 있다면 멈추기를 허용합니다.
+    stopBtn.disabled = Object.keys(g.runners || {}).length === 0; 
+    
+    const clickable = g.clickableColumns || [];
+    const sel = g.selectedThisRoll || [];
     const cols=[...new Set(clickable.map(e=>typeof e==='object'?e.col:e))];
     msg.textContent='등산로(열)를 클릭하세요';
     if(sel.length===0){
