@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.011</title>
+<title>Can't Stop Ver.012</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
 
@@ -35,18 +35,21 @@ body {
 
 /* ─── [추가] 방장 관리 기능 전용 스타일 ─── */
 .kick-btn {
-  background: #e84040;
+  background: #ff4d4d;
+  color: white;
   border: none;
   border-radius: 4px;
-  color: white;
-  font-size: 10px;
   padding: 2px 6px;
-  margin-left: 8px;
+  font-size: 11px;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  transition: opacity 0.2s;
+  margin-left: 8px;
+  vertical-align: middle;
+  transition: background 0.2s;
 }
-.kick-btn:hover { opacity: 0.8; }
+
+.kick-btn:hover {
+  background: #ff1a1a;
+}
 
 .btn-admin {
   flex: 1;
@@ -1163,40 +1166,35 @@ function renderBoard(g){
 }
 
 function renderPlayers(g){
-  const list=document.getElementById('player-list');
-  list.innerHTML='';
-  const cid=g.playerOrder[g.currentTurnIndex];
+  const list = document.getElementById('player-list');
+  list.innerHTML = '';
+  const cid = g.playerOrder[g.currentTurnIndex];
 
-  // [추가] 방장 권한 확인을 위해 현재 방 데이터를 가져오는 로직이 필요할 수 있습니다.
-  // 여기서는 로컬 상태(localGame)나 서버 데이터를 참조한다고 가정합니다.
-
-  g.playerOrder.forEach(pid=>{
-    const p=g.players[pid];
-    const c=P_COLORS[p.colorIndex];
-    const captured=p.capturedCols||[];
-    const card=document.createElement('div');
-    card.className='player-card'+(pid===cid?' active':'');
-    card.style.color=`var(${c})`;
-    const meBadge=pid===myId?`<span class="p-me-badge">나</span>`:'';
-
-    // ─── [수정 및 추가] 방장 전용 강퇴 버튼 ───
-    // 내가 방장이고, 이 카드의 주인공이 내가 아닐 때만 버튼 노출
-    const isHost = localGame.host === myId; // 방장 여부 확인 (전역 변수 활용)
+  g.playerOrder.forEach(pid => {
+    const p = g.players[pid];
+    const c = P_COLORS[p.colorIndex];
+    const captured = p.capturedCols || [];
+    const card = document.createElement('div');
+    card.className = 'player-card' + (pid === cid ? ' active' : '');
+    card.style.color = `var(${c})`;
+    
+    const meBadge = pid === myId ? `<span class="p-me-badge">나</span>` : '';
+    
+    // ─── [추가] 방장 전용 강퇴 버튼 로직 ───
+    // localGame.host가 나(myId)이고, 이 카드가 내 카드가 아닐 때만 버튼 노출
+    const isHost = localGame && localGame.host === myId;
     const kickBtn = (isHost && pid !== myId) 
-      ? `<button class="kick-btn" onclick="kickPlayer('${pid}')">강퇴</button>` 
+      ? `<button class="kick-btn" onclick="kickPlayer('${pid}', '${p.name}')">강퇴</button>` 
       : '';
 
     card.innerHTML = `
-      <div class="p-name">
-        ${p.name}${meBadge}
-        ${kickBtn} 
+      <div class="p-name" style="color: var(${c}) !important;">
+        ${p.name}${meBadge} ${kickBtn}
       </div>
-      <div class="p-score">${captured.length} / ${WIN_COLS} 열 정복</div>
+      <div class="p-score" style="color: var(--muted);">${captured.length} / ${WIN_COLS} 열 정복</div>
       <div class="captured-cols">
-        ${captured.map(col=>`<div class="col-badge" style="background:var(${c})">${col}</div>`).join('')}
+        ${captured.map(col => `<div class="col-badge" style="background:var(${c}); color:#000;">${col}</div>`).join('')}
       </div>`;
-    // ──────────────────────────────────────────
-
     list.appendChild(card);
   });
 }
@@ -1288,11 +1286,28 @@ async function forceSkipTurn() {
   toast('방장에 의해 턴이 넘어갔습니다');
 }
 
-// 2. 플레이어 강퇴
-async function kickPlayer(targetId) {
-  if (!confirm('이 플레이어를 강퇴하시겠습니까?')) return;
-  await set(ref(db, `rooms/${roomCode}/players/${targetId}`), null);
-  toast('플레이어를 강퇴했습니다');
+// 1. 플레이어 강퇴 함수 (Firebase에서 데이터 삭제)
+async function kickPlayer(targetId, targetName) {
+  if (!confirm(`${targetName}님을 정말 강퇴하시겠습니까?`)) return;
+  
+  try {
+    // 해당 플레이어 데이터를 삭제
+    await set(ref(db, `rooms/${roomCode}/players/${targetId}`), null);
+    toast(`${targetName}님을 강퇴했습니다.`);
+  } catch (e) {
+    console.error(e);
+    alert('강퇴 처리에 실패했습니다.');
+  }
+}
+window.kickPlayer = kickPlayer;
+
+// 2. [중요] 강퇴 당한 플레이어 감지 로직 (listenRoom 함수 내부에 추가 권장)
+// 이 부분은 게임 데이터 리스너 안에서 내가 플레이어 목록에 더 이상 없는지 체크합니다.
+function checkKicked(players) {
+  if (status === 'playing' && players && !players[myId]) {
+    alert('방장에 의해 강퇴되었습니다.');
+    location.href = 'index.html'; // 대기실이나 메인으로 튕겨냄
+  }
 }
 
 // 3. 방 리셋
