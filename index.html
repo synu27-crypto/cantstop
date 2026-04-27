@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.012</title>
+<title>Can't Stop Ver.013</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -775,6 +775,7 @@ let localGame=null;
 let chatListening=false;
 let prevPhase='';
 let cellSize=34;
+let isProcessingClick = false; // 클릭 연타 방지용 자물쇠
 
 // 이모지 피커 초기화
 const picker = document.getElementById('emoji-picker');
@@ -1221,63 +1222,66 @@ async function rollDice(){
 window.rollDice=rollDice;
 
 async function clickColumn(col, adv) {
+  // 1. 자물쇠 확인: 이미 처리 중이면 즉시 무시 (광클 방지)
+  if (isProcessingClick) return;
+
   col = parseInt(col);
   adv = parseInt(adv) || 1;
-  
+
   if (!localGame) return;
   const g = localGame;
-  
-  // 1. 내 턴 확인
+
   if (g.playerOrder[g.currentTurnIndex] !== myId) return;
   if (g.phase !== 'choose') return;
 
-  // 2. [가장 중요] 현재 보드의 러너 개수 파악
-  // g.runners가 없으면 빈 객체로 시작
-  const currentRunners = g.runners || {};
-  const runnerKeys = Object.keys(currentRunners);
-  
-  // 3. [핵심 로직] 새로운 번호를 누른 것인지 확인
-  const isNewPath = !currentRunners.hasOwnProperty(col);
+  // 2. 조건이 맞아떨어지면 자물쇠 잠금
+  isProcessingClick = true;
 
-  // 4. [철벽 방어] 이미 3개의 열을 등반 중인데 새로운 번호를 누르면 즉시 차단
-  if (isNewPath && runnerKeys.length >= MAX_RUNNERS) {
-    toast('⚠ 이미 3개의 열을 등반 중입니다!');
-    return; // 함수 종료 (서버 업데이트 안 함)
+  try {
+    const currentRunners = g.runners || {};
+    const runnerKeys = Object.keys(currentRunners).map(Number);
+    const isExistingPath = runnerKeys.includes(col);
+
+    if (!isExistingPath && runnerKeys.length >= MAX_RUNNERS) {
+      console.warn("4번째 말 놓기 시도 차단됨:", col);
+      toast('⚠ 한 턴에 말은 3개까지만 사용할 수 있습니다!');
+      return; 
+    }
+
+    if (!canAdvance(col, currentRunners, g.columns || {}, myId)) {
+      toast('이 열은 더 이상 전진할 수 없습니다.');
+      return; 
+    }
+
+    const newRunners = { ...currentRunners };
+    const columns = JSON.parse(JSON.stringify(g.columns || {}));
+    const selected = [...(g.selectedThisRoll || []), col];
+    
+    const colData = columns[col] || { positions: {}, captured: null };
+    const curPos = newRunners[col] !== undefined ? newRunners[col] : (colData.positions?.[myId] || 0);
+    
+    newRunners[col] = Math.min(curPos + adv, COL_SIZES[col]);
+    sfxSelect();
+
+    const isDone = adv >= 2 || selected.length >= 2 || 
+                   computeClickable(g.dice, newRunners, columns, myId, selected).length === 0;
+    
+    const nextClickable = isDone ? [] : computeClickable(g.dice, newRunners, columns, myId, selected);
+    const logEntry = `<b>${escHtml(myName)}</b> ↑ 열 ${col}${adv >= 2 ? ' (×2)' : ''}`;
+
+    await update(ref(db, 'rooms/' + roomCode + '/game'), {
+      runners: newRunners,
+      selectedThisRoll: isDone ? [] : selected,
+      clickableColumns: isDone ? [] : nextClickable,
+      phase: isDone ? 'roll' : 'choose',
+      log: [...(g.log || []), logEntry]
+    });
+  } finally {
+    // 3. 서버 업데이트 등 모든 작업이 끝나면 자물쇠 해제
+    isProcessingClick = false;
   }
-
-  // 5. 전진 가능 여부 확인
-  if (!canAdvance(col, currentRunners, g.columns || {}, myId)) {
-    toast('이 열은 더 이상 전진할 수 없습니다.');
-    return;
-  }
-
-  // 6. 데이터 업데이트 준비
-  const runners = { ...currentRunners };
-  const columns = JSON.parse(JSON.stringify(g.columns || {}));
-  const selected = [...(g.selectedThisRoll || [])];
-  
-  const colData = columns[col] || { positions: {}, captured: null };
-  const curPos = runners[col] !== undefined ? runners[col] : (colData.positions?.[myId] || 0);
-  
-  runners[col] = Math.min(curPos + adv, COL_SIZES[col]);
-  selected.push(col);
-  sfxSelect();
-
-  const isDone = adv >= 2 || selected.length >= 2 || 
-                 computeClickable(g.dice, runners, columns, myId, selected).length === 0;
-  
-  const nextClickable = isDone ? [] : computeClickable(g.dice, runners, columns, myId, selected);
-  const logEntry = `<b>${escHtml(myName)}</b> ↑ 열 ${col}${adv >= 2 ? ' (×2)' : ''}`;
-
-  // 7. 서버 전송
-  await update(ref(db, 'rooms/' + roomCode + '/game'), {
-    runners,
-    selectedThisRoll: isDone ? [] : selected,
-    clickableColumns: isDone ? [] : nextClickable,
-    phase: isDone ? 'roll' : 'choose',
-    log: [...(g.log || []), logEntry]
-  });
 }
+
 window.clickColumn=clickColumn;
 
 async function stopTurn(){
