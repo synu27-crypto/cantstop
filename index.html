@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.013</title>
+<title>Can't Stop Ver.011</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1103,16 +1103,28 @@ function getPairs(dice){
   return [{x:a+b,y:c+d},{x:a+c,y:b+d},{x:a+d,y:b+c}];
 }
 
-function canAdvance(col,runners,columns,pid){
-  col=parseInt(col);
-  if(col<2||col>12) return false;
-  const cd=columns[col]||{positions:{},captured:null};
-  const size=COL_SIZES[col];
-  if(cd.captured) return false;
-  const curPos=runners[col]!==undefined?runners[col]:(cd.positions?.[pid]||0);
-  if(curPos>=size) return false;
-  if(runners[col]!==undefined) return true;
-  return Object.keys(runners).length<MAX_RUNNERS;
+function canAdvance(col, runners, columns, pid) {
+  col = parseInt(col);
+  // 1. 열 범위 체크 (2~12)
+  if (col < 2 || col > 12) return false;
+
+  const cd = columns[col] || { positions: {}, captured: null };
+  const size = COL_SIZES[col];
+
+  // 2. 이미 누군가 정복한 열인지 체크
+  if (cd.captured) return false;
+
+  // 3. 현재 위치 확인 (러너 위치 우선, 없으면 확정 위치)
+  const curPos = runners[col] !== undefined ? runners[col] : (cd.positions?.[pid] || 0);
+
+  // 4. 이미 꼭대기에 도달했는지 체크
+  if (curPos >= size) return false;
+
+  // 5. [핵심] 이미 이 열에 러너가 있다면 무조건 진행 가능
+  if (runners[col] !== undefined) return true;
+
+  // 6. [핵심] 새로운 열에 들어가는 것이라면, 현재 러너가 3개 미만일 때만 가능
+  return Object.keys(runners).length < MAX_RUNNERS;
 }
 
 function computeClickable(dice, runners, columns, pid, selectedThisRoll) {
@@ -1221,17 +1233,17 @@ async function clickColumn(col, adv){
   const columns = JSON.parse(JSON.stringify(g.columns || {}));
   const selected = [ ...(g.selectedThisRoll || []) ];
 
-  // ─── [보완된 체크 로직] ───
-  // 현재 이 열에 러너가 없고, 이미 사용 중인 러너가 3개라면 무조건 차단
-  const isNewPath = runners[col] === undefined;
+  // ─── [가장 중요한 체크 로직] ───
+  // 현재 클릭한 열에 러너가 없고(새로운 길), 이미 러너가 3개라면 무조건 차단
+  const isNewPath = (runners[col] === undefined);
   if (isNewPath && Object.keys(runners).length >= MAX_RUNNERS) {
-    toast('러너 3개를 모두 사용 중입니다!');
-    return;
+    toast('⚠ 이미 3개의 열을 등반 중입니다! (말 3개 제한)');
+    return; // 여기서 함수를 끝내버려야 서버에 데이터가 안 넘어갑니다.
   }
-  // ─────────────────────────
+  // ──────────────────────────────
 
   if(!canAdvance(col, runners, columns, myId)) {
-    toast('이 열은 더 이상 전진할 수 없습니다');
+    toast('이 열은 더 이상 전진할 수 없습니다.');
     return;
   }
 
