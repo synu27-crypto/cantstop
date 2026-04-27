@@ -1,0 +1,1040 @@
+html
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Can't Stop Ver.01</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+
+<style>
+:root {
+  --bg:#0d0c0a; --surface:#181714; --surface2:#211f1c; --surface3:#2a2825;
+  --border:#2e2b26; --border2:#3d3a34;
+  --gold:#d4a843; --gold2:#f0c96a; --gold3:#a07830;
+  --cream:#f5efe0; --text:#e8dfc8; --muted:#7a7060; --muted2:#504840;
+  --p1:#e84040; --p2:#3a8fe8; --p3:#2db87a; --p4:#e8a020;
+  --p1d:#8a1010; --p2d:#1050a0; --p3d:#106040; --p4d:#905010;
+  --runner:#ffffff;
+  --radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;height:100%;}
+
+/* ─── BUST EFFECT ─── */
+@keyframes bustShake{0%{transform:translate(0,0);}10%{transform:translate(-8px,4px);}20%{transform:translate(8px,-4px);}30%{transform:translate(-6px,6px);}40%{transform:translate(6px,-6px);}50%{transform:translate(-4px,4px);}60%{transform:translate(4px,-4px);}70%{transform:translate(-2px,2px);}80%{transform:translate(2px,-2px);}90%{transform:translate(-1px,1px);}100%{transform:translate(0,0);}}
+@keyframes bustFlash{0%,100%{opacity:0;}40%{opacity:.35;}}
+.bust-active{animation:bustShake .55s ease-in-out;}
+#bust-overlay{pointer-events:none;position:fixed;inset:0;background:#e84040;opacity:0;z-index:500;transition:opacity .1s;}
+#bust-overlay.flash{animation:bustFlash .55s ease-in-out;}
+
+/* ─── LOBBY ─── */
+#lobby{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;overflow-y:auto;z-index:10;}
+#lobby::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 15% 15%,rgba(212,168,67,.07) 0%,transparent 55%),radial-gradient(ellipse 55% 60% at 85% 85%,rgba(232,64,64,.05) 0%,transparent 55%);pointer-events:none;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,10vw,108px);letter-spacing:6px;color:var(--gold);text-shadow:0 0 50px rgba(212,168,67,.35),0 3px 0 #000;line-height:1;text-align:center;}
+.logo-sub{font-size:12px;letter-spacing:7px;color:var(--muted);text-transform:uppercase;text-align:center;margin-top:6px;margin-bottom:40px;}
+.lobby-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;width:100%;max-width:460px;}
+.lobby-tabs{display:flex;gap:3px;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:28px;}
+.tab-btn{flex:1;padding:9px;border:none;border-radius:7px;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;}
+.tab-btn.active{background:var(--surface2);color:var(--gold);}
+.tab-content{display:none;}.tab-content.active{display:block;}
+label{display:block;font-size:11px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:7px;}
+input[type="text"]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:13px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;margin-bottom:18px;outline:none;transition:border-color .2s;}
+input[type="text"]:focus{border-color:var(--gold);}
+.player-count-selector{display:flex;gap:7px;margin-bottom:18px;}
+.count-btn{flex:1;padding:11px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:17px;font-weight:600;cursor:pointer;transition:all .2s;}
+.count-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(212,168,67,.08);}
+.btn-primary{width:100%;padding:15px;background:var(--gold);border:none;border-radius:11px;color:#0d0c0a;font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:6px;}
+.btn-primary:hover{background:var(--gold2);transform:translateY(-1px);}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+.room-code-display{background:var(--bg);border:2px dashed var(--gold);border-radius:11px;padding:18px;text-align:center;margin-bottom:18px;}
+.room-code-display .code{font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--gold);letter-spacing:10px;}
+.room-code-display .hint{font-size:11px;color:var(--muted);margin-top:3px;}
+.waiting-players{margin-bottom:18px;}
+.player-slot{display:flex;align-items:center;gap:11px;padding:11px;border-radius:9px;background:var(--bg);margin-bottom:7px;}
+.player-dot{width:9px;height:9px;border-radius:50%;}
+.player-slot.empty .player-dot{background:var(--border);}
+.status-msg{text-align:center;font-size:13px;color:var(--muted);padding:10px;}
+
+/* ─── GAME SHELL ─── */
+#game{display:none;position:fixed;inset:0;padding:12px;overflow:hidden;}
+.game-grid{
+  display:grid;
+  grid-template-columns:190px 1fr 190px;
+  grid-template-rows:44px 1fr 130px;
+  gap:10px;
+  height:100%;
+}
+
+/* header */
+.game-header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 4px;}
+.game-title{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);letter-spacing:3px;}
+.turn-badge{padding:6px 18px;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:.5px;border:2px solid currentColor;transition:color .3s;}
+.room-info{font-size:12px;color:var(--muted);}
+.room-info strong{color:var(--gold);}
+
+/* left panel */
+.left-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:8px;overflow:hidden;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--muted);border-bottom:1px solid var(--border);padding-bottom:8px;flex-shrink:0;}
+
+/* player cards */
+.player-card{border-radius:10px;padding:11px 12px;border:2px solid transparent;transition:all .25s;background:var(--bg);position:relative;overflow:hidden;}
+.player-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:currentColor;border-radius:3px 0 0 3px;opacity:0;transition:opacity .25s;}
+.player-card.active{border-color:currentColor;}
+.player-card.active::before{opacity:1;}
+.p-name{font-weight:600;font-size:13px;margin-bottom:2px;display:flex;align-items:center;gap:6px;}
+.p-me-badge{font-size:9px;letter-spacing:.5px;background:currentColor;color:#0d0c0a;padding:1px 5px;border-radius:4px;font-weight:700;}
+.p-score{font-size:10px;color:var(--muted);margin-bottom:5px;}
+.captured-cols{display:flex;flex-wrap:wrap;gap:3px;}
+.col-badge{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#0d0c0a;}
+
+/* board */
+.board-wrap{display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.board{display:flex;gap:3px;align-items:flex-end;padding:16px 14px 10px;background:var(--surface);border:1px solid var(--border);border-radius:18px;position:relative;}
+.column{display:flex;flex-direction:column;align-items:center;gap:2.5px;}
+
+/* cells */
+.cell{border-radius:50%;background:var(--bg);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s,border-color .2s,box-shadow .2s;flex-shrink:0;}
+.cell.top-cell{border-color:var(--gold);background:rgba(212,168,67,.07);}
+.cell.has-runner{border-color:rgba(255,255,255,.7);background:rgba(255,255,255,.07);box-shadow:0 0 8px rgba(255,255,255,.2);}
+.cell.captured-cell{border-color:transparent;}
+
+/* pegs */
+.peg-wrap{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;align-items:center;width:100%;height:100%;padding:2px;}
+.peg{border-radius:50%;flex-shrink:0;position:relative;}
+.peg::after{content:'';position:absolute;top:2px;left:2px;right:2px;bottom:40%;border-radius:50%;background:rgba(255,255,255,.3);}
+
+/* runner marker */
+.runner-ring{position:absolute;inset:2px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 6px #fff,inset 0 0 4px rgba(255,255,255,.2);pointer-events:none;}
+
+/* col number */
+.col-num{font-family:'Bebas Neue',sans-serif;color:var(--muted);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .2s;user-select:none;cursor:default;margin-top:3px;flex-shrink:0;}
+.col-num.clickable{color:#0d0c0a!important;background:var(--gold);cursor:pointer;box-shadow:0 0 14px rgba(212,168,67,.8);animation:colPulse .9s ease-in-out infinite;}
+.col-num.clickable:hover{background:var(--gold2);transform:scale(1.2);animation:none;}
+.col-num.chosen{color:#0d0c0a!important;background:var(--gold3);cursor:default;animation:none;}
+@keyframes colPulse{0%,100%{box-shadow:0 0 8px rgba(212,168,67,.5);}50%{box-shadow:0 0 20px rgba(212,168,67,1);}}
+
+/* right panel (log + chat) */
+.right-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:8px;overflow:hidden;}
+.log-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;}
+.log-item{font-size:10.5px;color:var(--muted);padding:2.5px 0;border-bottom:1px solid rgba(255,255,255,.03);}
+.log-item b{color:var(--text);}
+.log-item.ev-bust b{color:var(--p1);}
+.log-item.ev-capture b{color:var(--gold);}
+.log-sep{height:1px;background:var(--border2);margin:4px 0;flex-shrink:0;}
+.chat-input-row{display:flex;gap:6px;flex-shrink:0;}
+.chat-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;outline:none;transition:border-color .2s;}
+.chat-input:focus{border-color:var(--gold);}
+.chat-send{padding:8px 12px;background:var(--gold);border:none;border-radius:8px;color:#0d0c0a;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;cursor:pointer;transition:background .2s;}
+.chat-send:hover{background:var(--gold2);}
+
+/* dice section */
+.dice-section{grid-column:1/-1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+.dice-row{display:flex;gap:9px;align-items:center;}
+
+/* die */
+.die{border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;color:#1a1816;box-shadow:0 4px 10px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -2px 0 rgba(0,0,0,.15);background:var(--cream);position:relative;transition:transform .1s;flex-shrink:0;}
+.die.rolling{animation:dieRoll .42s cubic-bezier(.36,.07,.19,.97);}
+@keyframes dieRoll{0%{transform:rotate(0)scale(1);}20%{transform:rotate(-18deg)scale(.92);}45%{transform:rotate(14deg)scale(1.08);}70%{transform:rotate(-8deg)scale(.96);}100%{transform:rotate(0)scale(1);}}
+
+/* dice info */
+.dice-info{flex:1;min-width:140px;}
+.dice-msg{font-size:13px;color:var(--text);font-weight:600;}
+.dice-hint{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5;}
+
+/* action buttons */
+.action-btns{display:flex;gap:9px;margin-left:auto;flex-shrink:0;}
+.btn-roll{padding:12px 24px;background:var(--gold);border:none;border-radius:10px;color:#0d0c0a;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.btn-roll:hover:not(:disabled){background:var(--gold2);transform:translateY(-1px);}
+.btn-roll:disabled{opacity:.28;cursor:not-allowed;}
+.btn-stop{padding:12px 24px;background:transparent;border:2px solid var(--border2);border-radius:10px;color:var(--text);font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.btn-stop:hover:not(:disabled){border-color:var(--text);}
+.btn-stop:disabled{opacity:.28;cursor:not-allowed;}
+
+/* ─── WINNER OVERLAY ─── */
+#winner-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:22px;}
+#winner-overlay.show{display:flex;}
+.winner-card{background:var(--surface);border:2px solid var(--gold);border-radius:22px;padding:52px 72px;text-align:center;box-shadow:0 0 70px rgba(212,168,67,.22);}
+.winner-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:7px;color:var(--muted);margin-bottom:6px;}
+.winner-name{font-family:'Bebas Neue',sans-serif;font-size:60px;color:var(--gold);text-shadow:0 0 36px rgba(212,168,67,.45);}
+.winner-sub{font-size:13px;color:var(--muted);margin-top:6px;}
+.winner-btns{display:flex;gap:10px;}
+.btn-rematch{padding:14px 32px;background:var(--gold);border:none;border-radius:11px;color:#0d0c0a;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.btn-rematch:hover{background:var(--gold2);transform:translateY(-1px);}
+.btn-lobby{padding:14px 32px;background:transparent;border:2px solid var(--border2);border-radius:11px;color:var(--text);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.btn-lobby:hover{border-color:var(--text);}
+
+/* toast */
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);border:1px solid var(--border2);border-radius:100px;padding:10px 22px;font-size:13px;opacity:0;transition:all .3s;z-index:300;white-space:nowrap;pointer-events:none;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* scrollbar */
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ─── RESPONSIVE sizes (controlled by JS) ─── */
+</style>
+</head>
+<body>
+<div id="bust-overlay"></div>
+
+<!-- ══ LOBBY ══ -->
+<div id="lobby">
+  <div class="logo">CAN'T STOP</div>
+  <p class="logo-sub">The Push-Your-Luck Dice Game</p>
+  <div class="lobby-card">
+    <div class="lobby-tabs">
+      <button class="tab-btn active" onclick="switchTab('create')">방 만들기</button>
+      <button class="tab-btn"        onclick="switchTab('join')">방 참가하기</button>
+    </div>
+    <div class="tab-content active" id="tab-create">
+      <label>닉네임</label>
+      <input type="text" id="create-name" placeholder="이름을 입력하세요" maxlength="12">
+      <label>플레이어 수</label>
+      <div class="player-count-selector">
+        <button class="count-btn" onclick="selectCount(2)">2</button>
+        <button class="count-btn" onclick="selectCount(3)">3</button>
+        <button class="count-btn active" onclick="selectCount(4)">4</button>
+      </div>
+      <button class="btn-primary" onclick="createRoom()">방 만들기</button>
+    </div>
+    <div class="tab-content" id="tab-join">
+      <label>닉네임</label>
+      <input type="text" id="join-name" placeholder="이름을 입력하세요" maxlength="12">
+      <label>방 코드</label>
+      <input type="text" id="join-code" placeholder="4자리 코드" maxlength="4"
+        style="text-transform:uppercase;letter-spacing:5px;font-size:20px;text-align:center">
+      <button class="btn-primary" onclick="joinRoom()">참가하기</button>
+    </div>
+    <div class="tab-content" id="tab-waiting">
+      <div class="room-code-display">
+        <div class="code" id="display-code">----</div>
+        <div class="hint">이 코드를 친구에게 공유하세요</div>
+      </div>
+      <div class="waiting-players" id="waiting-players"></div>
+      <button class="btn-primary" id="start-btn" onclick="startGame()" disabled>게임 시작</button>
+      <div class="status-msg" id="waiting-msg">플레이어를 기다리는 중...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GAME ══ -->
+<div id="game">
+  <div class="game-grid" id="game-grid">
+    <!-- header -->
+    <div class="game-header">
+      <div class="game-title">CAN'T STOP</div>
+      <div class="turn-badge" id="turn-badge">-</div>
+      <div class="room-info">방 코드 <strong id="game-room-code"></strong></div>
+    </div>
+    <!-- left -->
+    <div class="left-panel">
+      <div class="panel-title">플레이어</div>
+      <div id="player-list" style="display:flex;flex-direction:column;gap:7px;overflow-y:auto;flex:1;"></div>
+    </div>
+    <!-- board -->
+    <div class="board-wrap"><div class="board" id="board"></div></div>
+    <!-- right -->
+    <div class="right-panel">
+      <div class="panel-title">로그 &amp; 채팅</div>
+      <div class="log-list" id="log-list"></div>
+      <div class="log-sep"></div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chat-input" placeholder="메시지 입력..." maxlength="60"
+          onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="chat-send" onclick="sendChat()">전송</button>
+      </div>
+    </div>
+    <!-- dice -->
+    <div class="dice-section" id="dice-section">
+      <div class="dice-row" id="dice-row">
+        <div class="die" id="d1">-</div>
+        <div class="die" id="d2">-</div>
+        <div class="die" id="d3">-</div>
+        <div class="die" id="d4">-</div>
+      </div>
+      <div class="dice-info">
+        <div class="dice-msg"  id="dice-msg">주사위를 굴리세요</div>
+        <div class="dice-hint" id="dice-hint"></div>
+      </div>
+      <div class="action-btns">
+        <button class="btn-stop" id="btn-stop" onclick="stopTurn()" disabled>멈추기</button>
+        <button class="btn-roll" id="btn-roll" onclick="rollDice()" disabled>굴리기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- winner -->
+<div id="winner-overlay">
+  <div class="winner-card">
+    <div class="winner-title">WINNER</div>
+    <div class="winner-name" id="winner-name">-</div>
+    <div class="winner-sub"  id="winner-sub">-</div>
+  </div>
+  <div class="winner-btns">
+    <button class="btn-rematch" onclick="rematch()">재대결</button>
+    <button class="btn-lobby"   onclick="location.reload()">로비로</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue, update, push }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  ★ Firebase 설정을 여기에 붙여넣으세요 ★
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const firebaseConfig = {
+  apiKey: "AIzaSyCh23cdVpNM-dIN2KTqv4pe9-YrVs-fSXQ",
+  authDomain: "can-t-stop-11645.firebaseapp.com",
+  databaseURL: "https://can-t-stop-11645-default-rtdb.firebaseio.com", // Realtime DB 동기화를 위해 추가
+  projectId: "can-t-stop-11645",
+  storageBucket: "can-t-stop-11645.firebasestorage.app",
+  messagingSenderId: "571023864530",
+  appId: "1:571023864530:web:f11af42978a5a2ba79330b",
+  measurementId: "G-TJB19RKC36"
+};
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+const analytics = getAnalytics(app);
+
+// ── 상수 ──
+const COL_SIZES   = {2:3,3:5,4:7,5:9,6:11,7:13,8:11,9:9,10:7,11:5,12:3};
+const P_COLORS    = ['--p1','--p2','--p3','--p4'];
+const P_DARK      = ['--p1d','--p2d','--p3d','--p4d'];
+const COLOR_NAMES = ['빨강','파랑','초록','주황'];
+const WIN_COLS    = 3;
+const MAX_RUNNERS = 3;
+
+// ── 전역 상태 ──
+let roomCode='', myId='', myName='', selectedCount=4;
+let localGame=null;
+let cellSize=32; // 동적으로 계산
+
+// ══════════════════════════════════════
+//  소리 (Web Audio API)
+// ══════════════════════════════════════
+let audioCtx=null;
+function getAudio(){
+  if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function beep(freq,dur,type='sine',vol=.18,delay=0){
+  try{
+    const ctx=getAudio();
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type=type; o.frequency.value=freq;
+    g.gain.setValueAtTime(0,ctx.currentTime+delay);
+    g.gain.linearRampToValueAtTime(vol,ctx.currentTime+delay+.01);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+delay+dur);
+    o.start(ctx.currentTime+delay);
+    o.stop(ctx.currentTime+delay+dur+.05);
+  }catch(e){}
+}
+function sfxRoll(){
+  [0,.05,.1,.15].forEach((d,i)=>beep(180+i*40,.06,'sawtooth',.06,d));
+}
+function sfxSelect(){
+  beep(520,.08,'sine',.15);
+  beep(700,.1,'sine',.12,.07);
+}
+function sfxBust(){
+  beep(220,.12,'sawtooth',.2);
+  beep(160,.2,'sawtooth',.18,.1);
+  beep(110,.3,'sawtooth',.15,.25);
+}
+function sfxCapture(){
+  [0,.08,.16,.24].forEach((d,i)=>beep(440+i*110,.12,'sine',.18,d));
+}
+function sfxWin(){
+  const melody=[523,659,784,1047];
+  melody.forEach((f,i)=>beep(f,.18,'sine',.22,i*.16));
+  melody.forEach((f,i)=>beep(f*.5,.24,'sine',.1,i*.16+.06));
+}
+function sfxChat(){
+  beep(800,.05,'sine',.08);
+}
+
+// ══════════════════════════════════════
+//  반응형 크기 계산
+// ══════════════════════════════════════
+function computeSizes(){
+  const W=window.innerWidth, H=window.innerHeight;
+  // 보드는 세로: (H - header44 - dice130 - gap*2 - padding*2)
+  // 가로: (W - leftPanel190 - rightPanel190 - gap*2 - padding*2)
+  const boardH = H - 44 - 130 - 10*2 - 12*2 - 32; // panels padding
+  const boardW = W - 190*2 - 10*2 - 12*2 - 28*2;   // board padding
+  // 11 columns, 13 cells max height
+  const byH = Math.floor((boardH - 40) / 13);       // 40 = col-num area
+  const byW = Math.floor((boardW - 11*3) / 11);
+  cellSize  = Math.max(22, Math.min(byH, byW, 38));
+  document.documentElement.style.setProperty('--cell',cellSize+'px');
+
+  // dice size
+  const dieS = Math.min(48, Math.floor((H*0.12)));
+  document.documentElement.style.setProperty('--die',dieS+'px');
+}
+window.addEventListener('resize',()=>{computeSizes();renderBoardOnly();});
+computeSizes();
+
+// ══════════════════════════════════════
+//  로비
+// ══════════════════════════════════════
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>
+    b.classList.toggle('active',['create','join','waiting'][i]===name));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+window.switchTab=switchTab;
+
+function selectCount(n){
+  selectedCount=n;
+  document.querySelectorAll('.count-btn').forEach((b,i)=>
+    b.classList.toggle('active',i+2===n));
+}
+window.selectCount=selectCount;
+selectCount(4);
+
+const genCode=()=>{const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)];return s;};
+const genId  =()=>Math.random().toString(36).slice(2,10);
+
+async function createRoom(){
+  myName=document.getElementById('create-name').value.trim();
+  if(!myName){toast('닉네임을 입력하세요');return;}
+  roomCode=genCode(); myId=genId();
+  await set(ref(db,'rooms/'+roomCode),{
+    status:'waiting', maxPlayers:selectedCount, host:myId,
+    players:{[myId]:{name:myName,colorIndex:0}}
+  });
+  document.getElementById('display-code').textContent=roomCode;
+  document.getElementById('game-room-code').textContent=roomCode;
+  switchTab('waiting'); listenRoom();
+}
+window.createRoom=createRoom;
+
+async function joinRoom(){
+  myName=document.getElementById('join-name').value.trim();
+  const code=document.getElementById('join-code').value.trim().toUpperCase();
+  if(!myName){toast('닉네임을 입력하세요');return;}
+  if(code.length!==4){toast('방 코드는 4자리입니다');return;}
+  const snap=await get(ref(db,'rooms/'+code));
+  if(!snap.exists()){toast('방을 찾을 수 없습니다');return;}
+  const room=snap.val();
+  if(room.status!=='waiting'){toast('이미 시작된 방입니다');return;}
+  const plist=Object.keys(room.players||{});
+  if(plist.length>=room.maxPlayers){toast('방이 꽉 찼습니다');return;}
+  myId=genId(); roomCode=code;
+  await update(ref(db,'rooms/'+code+'/players/'+myId),{name:myName,colorIndex:plist.length});
+  document.getElementById('display-code').textContent=roomCode;
+  document.getElementById('game-room-code').textContent=roomCode;
+  switchTab('waiting'); listenRoom();
+}
+window.joinRoom=joinRoom;
+
+function listenRoom(){
+  onValue(ref(db,'rooms/'+roomCode),snap=>{
+    if(!snap.exists()) return;
+    const room=snap.val();
+    if(room.status==='playing'){
+      document.getElementById('lobby').style.display='none';
+      document.getElementById('game').style.display='block';
+      computeSizes();
+      renderGame(room); return;
+    }
+    if(room.status==='waiting'){
+      // came back from game (rematch reset)
+      document.getElementById('winner-overlay').classList.remove('show');
+      document.getElementById('game').style.display='none';
+      document.getElementById('lobby').style.display='flex';
+      switchTab('waiting');
+    }
+    const players=Object.values(room.players||{});
+    const isHost=room.host===myId;
+    const wp=document.getElementById('waiting-players'); wp.innerHTML='';
+    for(let i=0;i<room.maxPlayers;i++){
+      const p=players[i];
+      const slot=document.createElement('div');
+      slot.className='player-slot'+(p?'':' empty');
+      const dot=document.createElement('div'); dot.className='player-dot';
+      if(p) dot.style.background=`var(${P_COLORS[i]})`;
+      const nm=document.createElement('span'); nm.style.fontSize='13px';
+      nm.textContent=p?p.name:'대기 중...'; if(!p) nm.style.color='var(--muted)';
+      slot.appendChild(dot); slot.appendChild(nm); wp.appendChild(slot);
+    }
+    const sb=document.getElementById('start-btn');
+    if(isHost){
+      sb.style.display=''; sb.disabled=players.length<2;
+      document.getElementById('waiting-msg').textContent=players.length<2?'최소 2명이 필요합니다':'게임을 시작할 수 있습니다';
+    }else{
+      sb.style.display='none';
+      document.getElementById('waiting-msg').textContent='호스트가 시작하길 기다리는 중...';
+    }
+  });
+}
+
+async function startGame(){
+  const snap=await get(ref(db,'rooms/'+roomCode));
+  const room=snap.val();
+  const players=Object.entries(room.players).map(([id,p])=>({id,...p}));
+  await update(ref(db,'rooms/'+roomCode),{status:'playing',game:buildGame(players),chat:{}});
+}
+window.startGame=startGame;
+
+async function rematch(){
+  const snap=await get(ref(db,'rooms/'+roomCode));
+  if(!snap.exists()) return;
+  const room=snap.val();
+  const players=Object.entries(room.players).map(([id,p])=>({id,...p}));
+  // rotate turn order
+  const rotated=[...players.slice(1),...players.slice(0,1)];
+  await update(ref(db,'rooms/'+roomCode),{status:'playing',game:buildGame(rotated),chat:{}});
+}
+window.rematch=rematch;
+
+// ══════════════════════════════════════
+//  게임 초기 상태
+// ══════════════════════════════════════
+function buildGame(players){
+  const columns={};
+  for(let c=2;c<=12;c++) columns[c]={positions:{},captured:null};
+  return {
+    players:players.reduce((a,p)=>{
+      a[p.id]={name:p.name,colorIndex:p.colorIndex,capturedCols:[]};return a;
+    },{}),
+    playerOrder:players.map(p=>p.id),
+    currentTurnIndex:0,
+    phase:'roll',
+    dice:[0,0,0,0],
+    runners:{},
+    clickableColumns:[],
+    selectedThisRoll:[],
+    log:[],
+    winner:null,
+    columns
+  };
+}
+
+// ══════════════════════════════════════
+//  핵심 규칙 로직
+// ══════════════════════════════════════
+
+function getPairs(dice){
+  const [a,b,c,d]=dice;
+  return [{x:a+b,y:c+d},{x:a+c,y:b+d},{x:a+d,y:b+c}];
+}
+
+/**
+ * 이 열에 러너를 전진시킬 수 있는지 검사
+ * - 열 범위 확인
+ * - 누군가 이미 정복한 열이면 불가 (본인 포함)
+ * - 최대 칸 초과 여부 검사 (러너 + 1 이 size 초과 불가)
+ * - 러너 슬롯 여유 확인
+ */
+function canAdvance(col, runners, columns, myId){
+  col=parseInt(col);
+  if(col<2||col>12) return false;
+  const cd=columns[col]||{positions:{},captured:null};
+  // 이미 정복된 열 (누구든) → 불가
+  if(cd.captured) return false;
+  const size=COL_SIZES[col];
+  // 현재 러너 위치 또는 내 영구 위치
+  const curPos= runners[col]!==undefined ? runners[col] : (cd.positions?.[myId]||0);
+  // 다음 칸이 최대 칸을 초과하면 불가
+  if(curPos+1 > size) return false;
+  // 이미 이 열에 러너가 있으면 슬롯 불필요
+  if(runners[col]!==undefined) return true;
+  return Object.keys(runners).length < MAX_RUNNERS;
+}
+
+/**
+ * 클릭 가능한 열 목록 계산
+ * 더블(두 쌍 모두 같은 수) 처리 포함
+ */
+function computeClickable(dice, runners, columns, myId, selectedThisRoll){
+  const sel=(selectedThisRoll||[]).map(Number);
+  if(sel.length>=2) return [];
+  const selSet=new Set(sel);
+  const available=new Map(); // col → advanceCount (1 or 2)
+
+  getPairs(dice).forEach(({x,y})=>{
+    const okX=canAdvance(x,runners,columns,myId);
+    const okY=canAdvance(y,runners,columns,myId);
+
+    if(sel.length===1){
+      // 첫 번째 이미 선택 → 짝 되는 열만
+      if(selSet.has(x) && okY) available.set(y,(available.get(y)||0)+1);
+      if(selSet.has(y) && okX) available.set(x,(available.get(x)||0)+1);
+    } else {
+      // 아무것도 선택 안 한 상태
+      if(x===y){
+        // 더블: 같은 열 두 번 이동
+        if(okX){
+          // 더블은 한 번의 클릭으로 2칸
+          available.set(x, Math.max(available.get(x)||0, 2));
+        }
+      } else {
+        if(okX) available.set(x,Math.max(available.get(x)||0,1));
+        if(okY) available.set(y,Math.max(available.get(y)||0,1));
+      }
+    }
+  });
+  return [...available.entries()].map(([col,adv])=>({col,adv}));
+}
+
+/**
+ * 어떤 쌍에서도 하나라도 유효한 열이 있으면 버스트 아님
+ */
+function isBustRoll(dice, runners, columns, myId){
+  return getPairs(dice).every(({x,y})=>
+    !canAdvance(x,runners,columns,myId) && !canAdvance(y,runners,columns,myId)
+  );
+}
+
+// ══════════════════════════════════════
+//  게임 액션
+// ══════════════════════════════════════
+async function rollDice(){
+  if(!localGame) return;
+  const g=localGame;
+  if(g.playerOrder[g.currentTurnIndex]!==myId) return;
+  sfxRoll();
+
+  const dice=Array.from({length:4},()=>Math.floor(Math.random()*6)+1);
+  document.getElementById('btn-roll').disabled=true;
+  ['d1','d2','d3','d4'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.classList.add('rolling');
+    setTimeout(()=>{el.classList.remove('rolling');el.textContent=dice[i];},420);
+  });
+
+  const runners=g.runners||{};
+  const bust   =isBustRoll(dice,runners,g.columns||{},myId);
+  const clickable=bust?[]:computeClickable(dice,runners,g.columns||{},myId,[]);
+  const logEntry=`<b>${g.players[myId].name}</b> 주사위 [${dice.join(',')}]`+(bust?' — <b class="ev-bust">버스트!</b>':'');
+
+  setTimeout(async()=>{
+    if(bust){
+      await update(ref(db,'rooms/'+roomCode+'/game'),{
+        dice,phase:'bust',clickableColumns:[],selectedThisRoll:[],
+        log:[...(g.log||[]),logEntry]
+      });
+      setTimeout(()=>bustTurn(),1700);
+    } else {
+      await update(ref(db,'rooms/'+roomCode+'/game'),{
+        dice,phase:'choose',
+        clickableColumns:clickable.map(e=>e),
+        selectedThisRoll:[],
+        log:[...(g.log||[]),logEntry]
+      });
+    }
+  },440);
+}
+window.rollDice=rollDice;
+
+async function clickColumn(col, adv){
+  col=parseInt(col); adv=parseInt(adv)||1;
+  if(!localGame) return;
+  const g=localGame;
+  if(g.playerOrder[g.currentTurnIndex]!==myId) return;
+  if(g.phase!=='choose') return;
+
+  const runners    ={...(g.runners||{})};
+  const columns    =JSON.parse(JSON.stringify(g.columns||{}));
+  const selected   =[...(g.selectedThisRoll||[])];
+
+  if(!canAdvance(col,runners,columns,myId)){toast('이 열은 선택할 수 없습니다');return;}
+
+  // adv만큼 전진 (더블이면 2)
+  const colData=columns[col]||{positions:{},captured:null};
+  const curPos =runners[col]!==undefined ? runners[col] : (colData.positions?.[myId]||0);
+  const size   =COL_SIZES[col];
+  runners[col] =Math.min(curPos+adv, size);
+  selected.push(col);
+  sfxSelect();
+
+  // 더블은 한 번 클릭으로 완료
+  const isDone = adv>=2 || selected.length>=2 ||
+    computeClickable(g.dice,runners,columns,myId,selected).length===0;
+
+  const nextClickable=isDone?[]:computeClickable(g.dice,runners,columns,myId,selected);
+  const logEntry=`<b>${g.players[myId].name}</b> → 열 ${col}${adv>=2?' (×2)':''}`;
+
+  await update(ref(db,'rooms/'+roomCode+'/game'),{
+    runners,
+    selectedThisRoll:isDone?[]:selected,
+    clickableColumns:isDone?[]:nextClickable.map(e=>e),
+    phase:isDone?'roll':'choose',
+    log:[...(g.log||[]),logEntry]
+  });
+}
+window.clickColumn=clickColumn;
+
+async function stopTurn(){
+  if(!localGame) return;
+  const g=localGame;
+  if(g.playerOrder[g.currentTurnIndex]!==myId) return;
+
+  const runners     =g.runners||{};
+  const columns     =JSON.parse(JSON.stringify(g.columns||{}));
+  const players     =JSON.parse(JSON.stringify(g.players||{}));
+  const capturedCols=(players[myId].capturedCols||[]).map(Number);
+  const newlyCaptured=[];
+
+  Object.entries(runners).forEach(([col,pos])=>{
+    col=parseInt(col);
+    if(!columns[col]) columns[col]={positions:{},captured:null};
+    columns[col].positions=columns[col].positions||{};
+    columns[col].positions[myId]=pos;
+    if(pos>=COL_SIZES[col] && !columns[col].captured){
+      columns[col].captured=myId;
+      if(!capturedCols.includes(col)) newlyCaptured.push(col);
+    }
+  });
+
+  if(newlyCaptured.length) sfxCapture();
+  newlyCaptured.forEach(c=>capturedCols.push(c));
+  players[myId].capturedCols=capturedCols;
+
+  const winner=capturedCols.length>=WIN_COLS?myId:null;
+  if(winner) setTimeout(sfxWin,200);
+
+  const nextIndex=(g.currentTurnIndex+1)%g.playerOrder.length;
+  const logEntry=`<b>${g.players[myId].name}</b> 멈춤`
+    +(newlyCaptured.length?` — <b class="ev-capture">열 ${newlyCaptured.join(', ')} 정복!</b>`:'');
+
+  await update(ref(db,'rooms/'+roomCode+'/game'),{
+    columns,players,
+    runners:{},clickableColumns:[],selectedThisRoll:[],
+    phase:'roll',dice:[0,0,0,0],
+    currentTurnIndex:nextIndex,winner,
+    log:[...(g.log||[]),logEntry]
+  });
+}
+window.stopTurn=stopTurn;
+
+async function bustTurn(){
+  if(!localGame) return;
+  const g=localGame;
+  if(g.playerOrder[g.currentTurnIndex]!==myId) return;
+  const nextIndex=(g.currentTurnIndex+1)%g.playerOrder.length;
+  const logEntry=`<b>${g.players[myId].name}</b> 버스트 — 진행 취소`;
+  await update(ref(db,'rooms/'+roomCode+'/game'),{
+    runners:{},clickableColumns:[],selectedThisRoll:[],
+    phase:'roll',dice:[0,0,0,0],
+    currentTurnIndex:nextIndex,
+    log:[...(g.log||[]),logEntry]
+  });
+}
+
+// ── 채팅 ──
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  const msg=input.value.trim();
+  if(!msg||!localGame) return;
+  input.value='';
+  const p=localGame.players[myId];
+  const entry={name:p.name,colorIndex:p.colorIndex,msg,ts:Date.now()};
+  await push(ref(db,'rooms/'+roomCode+'/chat'),entry);
+}
+window.sendChat=sendChat;
+
+function listenChat(){
+  onValue(ref(db,'rooms/'+roomCode+'/chat'),snap=>{
+    if(!snap.exists()) return;
+    const msgs=Object.values(snap.val());
+    const list=document.getElementById('log-list');
+    // 채팅 항목은 class='log-chat'으로 구분
+    document.querySelectorAll('.log-chat').forEach(e=>e.remove());
+    msgs.slice(-20).forEach(m=>{
+      const item=document.createElement('div');
+      item.className='log-item log-chat';
+      item.innerHTML=`<span style="color:var(${P_COLORS[m.colorIndex]});font-weight:600">${m.name}</span>: ${m.msg}`;
+      list.appendChild(item);
+    });
+    list.scrollTop=list.scrollHeight;
+    sfxChat();
+  });
+}
+
+// ══════════════════════════════════════
+//  렌더링
+// ══════════════════════════════════════
+let prevPhase='';
+
+function renderGame(room){
+  const g=room.game; localGame=g;
+
+  // 버스트 효과
+  if(g.phase==='bust' && prevPhase!=='bust'){
+    sfxBust();
+    const overlay=document.getElementById('bust-overlay');
+    const grid   =document.getElementById('game-grid');
+    overlay.classList.add('flash');
+    grid.classList.add('bust-active');
+    setTimeout(()=>{overlay.classList.remove('flash');grid.classList.remove('bust-active');},600);
+  }
+  prevPhase=g.phase;
+
+  renderBoard(g);
+  renderPlayers(g);
+  renderDiceUI(g);
+  renderLog(g);
+
+  const cid=g.playerOrder[g.currentTurnIndex];
+  const cp=g.players[cid];
+  const badge=document.getElementById('turn-badge');
+  badge.textContent=cid===myId?'내 차례':`${cp.name}의 차례`;
+  badge.style.color=`var(${P_COLORS[cp.colorIndex]})`;
+
+  if(g.winner){
+    const wp=g.players[g.winner];
+    document.getElementById('winner-name').textContent=wp.name;
+    document.getElementById('winner-sub').textContent=`${WIN_COLS}개의 열을 먼저 정복했습니다!`;
+    document.getElementById('winner-overlay').classList.add('show');
+  }
+}
+
+function renderBoardOnly(){
+  if(localGame) renderBoard(localGame);
+}
+
+function renderBoard(g){
+  const board=document.getElementById('board');
+  board.innerHTML='';
+  const runners      =g.runners||{};
+  const clickableArr =(g.clickableColumns||[]);
+  // clickableColumns는 {col,adv} 객체 배열 or 숫자 배열 (하위 호환)
+  const clickableMap =new Map();
+  clickableArr.forEach(e=>{
+    if(typeof e==='object'&&e!==null) clickableMap.set(parseInt(e.col),parseInt(e.adv)||1);
+    else clickableMap.set(parseInt(e),1);
+  });
+  const isMyTurn     =g.playerOrder[g.currentTurnIndex]===myId;
+  const isChoose     =g.phase==='choose';
+  const chosen       =new Set((g.selectedThisRoll||[]).map(Number));
+
+  const cs=cellSize;
+  const numS=Math.max(20,cs-2);
+
+  for(let col=2;col<=12;col++){
+    const size   =COL_SIZES[col];
+    const colData=g.columns?.[col]||{positions:{},captured:null};
+    const runnerPos=runners[col];
+    const isClick=isMyTurn&&isChoose&&clickableMap.has(col);
+    const adv    =clickableMap.get(col)||1;
+    const isChosen=chosen.has(col);
+
+    const colEl=document.createElement('div');
+    colEl.className='column';
+
+    for(let pos=size;pos>=1;pos--){
+      const cell=document.createElement('div');
+      cell.className='cell';
+      cell.style.cssText=`width:${cs}px;height:${cs}px;`;
+
+      if(colData.captured){
+        const cc=P_COLORS[g.players[colData.captured]?.colorIndex??0];
+        cell.classList.add('captured-cell');
+        cell.style.background=`var(${cc})`;
+        // top cell gets a star / glow
+        if(pos===size){
+          cell.style.boxShadow=`0 0 12px var(${cc}),inset 0 0 6px rgba(255,255,255,.25)`;
+          cell.innerHTML=`<span style="font-size:${cs*.4}px;line-height:1">★</span>`;
+        }
+      } else {
+        if(pos===size) cell.classList.add('top-cell');
+        if(runnerPos===pos) cell.classList.add('has-runner');
+
+        // pegs
+        const pegsHere=Object.entries(colData.positions||{})
+          .filter(([,pp])=>pp===pos).map(([pid])=>pid);
+
+        if(pegsHere.length){
+          const wrap=document.createElement('div');
+          wrap.className='peg-wrap';
+          pegsHere.forEach(pid=>{
+            const peg=document.createElement('div');
+            peg.className='peg';
+            const ci=g.players[pid]?.colorIndex??0;
+            const sz=pegsHere.length>2?cs*.28:pegsHere.length>1?cs*.35:cs*.44;
+            peg.style.cssText=`width:${sz}px;height:${sz}px;background:var(${P_COLORS[ci]});box-shadow:0 2px 4px rgba(0,0,0,.5);`;
+            wrap.appendChild(peg);
+          });
+          cell.appendChild(wrap);
+        }
+
+        // runner ring
+        if(runnerPos===pos){
+          const ring=document.createElement('div');
+          ring.className='runner-ring';
+          cell.appendChild(ring);
+        }
+      }
+      colEl.appendChild(cell);
+    }
+
+    // column number
+    const numEl=document.createElement('div');
+    numEl.className='col-num'+(isClick?' clickable':isChosen?' chosen':'');
+    numEl.style.cssText=`width:${numS}px;height:${numS}px;font-size:${numS*.6}px;`;
+    numEl.textContent=col+(adv>=2&&isClick?' ×2':'');
+    if(isClick) numEl.onclick=()=>clickColumn(col,adv);
+    colEl.appendChild(numEl);
+    board.appendChild(colEl);
+  }
+}
+
+function renderPlayers(g){
+  const list=document.getElementById('player-list');
+  list.innerHTML='';
+  const cid=g.playerOrder[g.currentTurnIndex];
+  g.playerOrder.forEach(pid=>{
+    const p=g.players[pid];
+    const c=P_COLORS[p.colorIndex];
+    const captured=p.capturedCols||[];
+    const card=document.createElement('div');
+    card.className='player-card'+(pid===cid?' active':'');
+    card.style.color=`var(${c})`;
+    const meBadge=pid===myId?`<span class="p-me-badge">나</span>`:'';
+    card.innerHTML=`
+      <div class="p-name">${p.name}${meBadge}</div>
+      <div class="p-score">${captured.length} / ${WIN_COLS} 열 정복</div>
+      <div class="captured-cols">
+        ${captured.map(col=>`<div class="col-badge" style="background:var(${c})">${col}</div>`).join('')}
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+function renderDiceUI(g){
+  const isMyTurn=g.playerOrder[g.currentTurnIndex]===myId;
+  const dice=g.dice||[0,0,0,0];
+  const dieS=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--die'))||44;
+
+  ['d1','d2','d3','d4'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.textContent=dice[i]||'-';
+    el.style.cssText=`width:${dieS}px;height:${dieS}px;font-size:${dieS*.58}px;`;
+  });
+
+  const rollBtn=document.getElementById('btn-roll');
+  const stopBtn=document.getElementById('btn-stop');
+  const msg    =document.getElementById('dice-msg');
+  const hint   =document.getElementById('dice-hint');
+
+  if(!isMyTurn){
+    rollBtn.disabled=true; stopBtn.disabled=true;
+    const cp=g.players[g.playerOrder[g.currentTurnIndex]];
+    msg.textContent=`${cp.name}의 차례입니다`; hint.textContent=''; return;
+  }
+
+  if(g.phase==='roll'){
+    rollBtn.disabled=false;
+    stopBtn.disabled=Object.keys(g.runners||{}).length===0;
+    msg.textContent='주사위를 굴리세요';
+    hint.textContent=Object.keys(g.runners||{}).length>0?'멈추면 현재 위치가 저장됩니다':'첫 굴리기';
+  } else if(g.phase==='choose'){
+    rollBtn.disabled=true; stopBtn.disabled=true;
+    const clickable=g.clickableColumns||[];
+    const sel=g.selectedThisRoll||[];
+    const cols=[...new Set(clickable.map(e=>typeof e==='object'?e.col:e))];
+    msg.textContent='등산로(열)를 클릭하세요';
+    if(sel.length===0){
+      hint.textContent=`선택 가능: ${cols.join(', ')}`;
+    } else {
+      hint.textContent=`열 ${sel[0]} 선택됨 → 두 번째 열을 선택하세요`;
+    }
+  } else if(g.phase==='bust'){
+    rollBtn.disabled=true; stopBtn.disabled=true;
+    msg.textContent='버스트! 이번 진행이 취소됩니다';
+    hint.textContent='잠시 후 다음 플레이어 차례로 넘어갑니다';
+  }
+}
+
+function renderLog(g){
+  const list=document.getElementById('log-list');
+  // 채팅 항목은 유지, 로그 항목만 재렌더
+  const chatItems=[...list.querySelectorAll('.log-chat')];
+  list.innerHTML='';
+  [...(g.log||[])].reverse().slice(0,30).forEach(e=>{
+    const item=document.createElement('div');
+    item.className='log-item'; item.innerHTML=e;
+    list.appendChild(item);
+  });
+  chatItems.forEach(c=>list.appendChild(c));
+}
+
+// ── 리얼타임 연결 ──
+let chatListening=false;
+onValue(ref(db,'rooms/'+roomCode||'__none__'),()=>{});  // dummy prevent error
+
+// listenRoom은 위에서 정의. 게임 진입 시 채팅도 연결
+const _origLR=listenRoom;
+
+function listenRoom(){
+  onValue(ref(db,'rooms/'+roomCode),snap=>{
+    if(!snap.exists()) return;
+    const room=snap.val();
+    if(room.status==='playing'){
+      document.getElementById('lobby').style.display='none';
+      document.getElementById('game').style.display='block';
+      computeSizes();
+      renderGame(room);
+      if(!chatListening){
+        chatListening=true;
+        listenChat();
+      }
+      return;
+    }
+    if(room.status==='waiting'){
+      document.getElementById('winner-overlay').classList.remove('show');
+      document.getElementById('game').style.display='none';
+      document.getElementById('lobby').style.display='flex';
+      chatListening=false;
+      switchTab('waiting');
+    }
+    const players=Object.values(room.players||{});
+    const isHost=room.host===myId;
+    const wp=document.getElementById('waiting-players'); wp.innerHTML='';
+    for(let i=0;i<room.maxPlayers;i++){
+      const p=players[i];
+      const slot=document.createElement('div');
+      slot.className='player-slot'+(p?'':' empty');
+      const dot=document.createElement('div'); dot.className='player-dot';
+      if(p) dot.style.background=`var(${P_COLORS[i]})`;
+      const nm=document.createElement('span'); nm.style.fontSize='13px';
+      nm.textContent=p?p.name:'대기 중...'; if(!p) nm.style.color='var(--muted)';
+      slot.appendChild(dot); slot.appendChild(nm); wp.appendChild(slot);
+    }
+    const sb=document.getElementById('start-btn');
+    if(isHost){
+      sb.style.display=''; sb.disabled=players.length<2;
+      document.getElementById('waiting-msg').textContent=players.length<2?'최소 2명이 필요합니다':'게임을 시작할 수 있습니다';
+    }else{
+      sb.style.display='none';
+      document.getElementById('waiting-msg').textContent='호스트가 시작하길 기다리는 중...';
+    }
+  });
+}
+
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>
