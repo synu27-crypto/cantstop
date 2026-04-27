@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.011</title>
+<title>Can't Stop Ver.012</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
 
@@ -186,8 +186,9 @@ input[type="text"]:focus{border-color:var(--gold);}
   <p class="logo-sub">The Push-Your-Luck Dice Game</p>
   <div class="lobby-card">
     <div class="lobby-tabs">
-      <button class="tab-btn active" onclick="switchTab('create')">방 만들기</button>
-      <button class="tab-btn"        onclick="switchTab('join')">방 참가하기</button>
+  <button class="tab-btn active" onclick="switchTab('create')">방 만들기</button>
+  <button class="tab-btn" onclick="switchTab('join')">방 참가하기</button>
+  <button class="tab-btn" onclick="switchTab('rules')">게임 규칙</button> </div>
     </div>
     <div class="tab-content active" id="tab-create">
       <label>닉네임</label>
@@ -207,6 +208,20 @@ input[type="text"]:focus{border-color:var(--gold);}
       <input type="text" id="join-code" placeholder="4자리 코드" maxlength="4"
         style="text-transform:uppercase;letter-spacing:5px;font-size:20px;text-align:center">
       <button class="btn-primary" onclick="joinRoom()">참가하기</button>
+    </div><div class="tab-content" id="tab-rules">
+      <div style="font-size: 13px; line-height: 1.6; color: var(--muted); max-height: 300px; overflow-y: auto; padding-right: 10px;">
+        <p style="color: var(--gold); font-weight: 600; margin-bottom: 8px;">1. 게임의 목표</p>
+        <p style="margin-bottom: 12px;">주사위를 굴려 11개의 등산로 중 먼저 <strong>3개의 열</strong>을 정복하는 플레이어가 승리합니다. [cite: 221, 344]</p>
+        
+        <p style="color: var(--gold); font-weight: 600; margin-bottom: 8px;">2. 주사위와 러너</p>
+        <p style="margin-bottom: 12px;">매 턴 4개의 주사위를 굴려 두 쌍으로 조합합니다. 한 턴에 사용할 수 있는 <strong>러너(흰색 마커)는 최대 3개</strong>입니다. [cite: 213, 345]</p>
+        
+        <p style="color: var(--gold); font-weight: 600; margin-bottom: 8px;">3. 전진과 멈춤</p>
+        <p style="margin-bottom: 12px;">조합한 숫자의 열로 러너를 전진시킵니다. 원할 때 <strong>멈추기</strong>를 눌러 현재 위치를 고정할 수 있습니다. [cite: 243, 347]</p>
+        
+        <p style="color: var(--gold); font-weight: 600; margin-bottom: 8px;">4. 버스트 (Bust)</p>
+        <p style="margin-bottom: 12px;">굴린 주사위 조합이 현재 진행 중인 열이나 새로운 열(러너가 남았을 때) 중 어디에도 해당하지 않으면 <strong>버스트</strong>가 되며 이번 턴의 모든 진행 기록이 삭제됩니다. [cite: 271, 343, 346]</p>
+      </div>
     </div>
     <div class="tab-content" id="tab-waiting">
       <div class="room-code-display">
@@ -391,7 +406,7 @@ computeSizes();
 // ══════════════════════════════════════
 function switchTab(name){
   document.querySelectorAll('.tab-btn').forEach((b,i)=>
-    b.classList.toggle('active',['create','join','waiting'][i]===name));
+    b.classList.toggle('active',['create','join','rules','waiting'][i]===name)); // 'rules' 추가
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
 }
@@ -573,23 +588,22 @@ function canAdvance(col, runners, columns, myId){
   if(col < 2 || col > 12) return false;
 
   const cd = columns[col] || {positions:{}, captured:null};
-
-  // 1. 이미 누군가(자신 포함) 정복한 열이면 더 이상 전진 불가 [cite: 216, 217]
-  if(cd.captured) return false;
-
   const size = COL_SIZES[col];
 
-  // 2. 현재 러너의 위치 또는 내 영구 위치를 확인
+  // 1. 이미 완전히 정복되어 확정된 열은 사용 불가
+  if(cd.captured) return false;
+
+  // 2. 현재 턴에서의 위치 확인 (러너 위치 우선)
   const curPos = runners[col] !== undefined ? runners[col] : (cd.positions?.[myId] || 0);
 
-  // 3. ★핵심 수정★: 이미 꼭대기에 도달해 있다면 더 이상 전진 불가 
-  // 이전 로직(curPos + 1 > size)을 더 명확하게 하여 버스트 판정을 돕습니다.
+  // 3. ★핵심★: 이미 꼭대기(size)에 도달했다면 이번 턴 내에서도 더 이상 전진 불가
+  // 이 조건이 있어야 '꼭대기 도달 후 더 굴리다 버스트'되는 긴장감이 정확히 구현됩니다.
   if(curPos >= size) return false;
 
-  // 4. 이미 이 열에 러너가 있다면 다음 칸으로 전진 가능
+  // 4. 기존 러너가 있는 열은 슬롯 소모 없이 전진 가능
   if(runners[col] !== undefined) return true;
 
-  // 5. 새로운 열에 진입해야 하는 경우, 사용 중인 러너가 3개 미만이어야 함 [cite: 213, 214]
+  // 5. 새 러너 투입은 현재 사용 중인 러너가 3개 미만일 때만 가능
   return Object.keys(runners).length < MAX_RUNNERS;
 }
 
