@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.013</title>
+<title>Can't Stop Ver.012</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
 
@@ -202,12 +202,15 @@ input[type="text"]:focus{border-color:var(--gold);}
 <div id="lobby">
   <div class="logo">CAN'T STOP</div>
   <p class="logo-sub">The Push-Your-Luck Dice Game</p>
+  
   <div class="lobby-card">
+    
     <div class="lobby-tabs">
-  <button class="tab-btn active" onclick="switchTab('create')">방 만들기</button>
-  <button class="tab-btn" onclick="switchTab('join')">방 참가하기</button>
-  <button class="tab-btn" onclick="switchTab('rules')">게임 규칙</button> </div>
+      <button class="tab-btn active" onclick="switchTab('create')">방 만들기</button>
+      <button class="tab-btn" onclick="switchTab('join')">방 참가하기</button>
+      <button class="tab-btn" onclick="switchTab('rules')">게임 규칙</button>
     </div>
+
     <div class="tab-content active" id="tab-create">
       <label>닉네임</label>
       <input type="text" id="create-name" placeholder="이름을 입력하세요" maxlength="12">
@@ -219,30 +222,32 @@ input[type="text"]:focus{border-color:var(--gold);}
       </div>
       <button class="btn-primary" onclick="createRoom()">방 만들기</button>
     </div>
+
     <div class="tab-content" id="tab-join">
       <label>닉네임</label>
       <input type="text" id="join-name" placeholder="이름을 입력하세요" maxlength="12">
       <label>방 코드</label>
-      <input type="text" id="join-code" placeholder="4자리 코드" maxlength="4"
-        style="text-transform:uppercase;letter-spacing:5px;font-size:20px;text-align:center">
+      <input type="text" id="join-code" placeholder="4자리 코드" maxlength="4" style="text-transform:uppercase;letter-spacing:5px;font-size:20px;text-align:center">
       <button class="btn-primary" onclick="joinRoom()">참가하기</button>
     </div>
-<div class="tab-content" id="tab-rules">
-  <div class="rules-container">
-    <div style="margin-bottom: 16px;">
-      <strong style="color: var(--gold); display: block; font-size: 14px; margin-bottom: 4px;">🏆 승리 조건</strong>
-      <p style="font-size: 13px; color: var(--muted); line-height: 1.5;">먼저 3개의 열을 끝까지 정복하여 자신의 색상 마커를 꼭대기에 올리면 승리합니다.</p>
+
+    <div class="tab-content" id="tab-rules">
+      <div class="rules-container">
+        <div style="margin-bottom: 16px;">
+          <strong style="color: var(--gold); display: block; font-size: 14px; margin-bottom: 4px;">🏆 승리 조건</strong>
+          <p style="font-size: 13px; color: var(--muted); line-height: 1.5;">먼저 3개의 열을 끝까지 정복하여 자신의 색상 마커를 꼭대기에 올리면 승리합니다.</p>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <strong style="color: var(--gold); display: block; font-size: 14px; margin-bottom: 4px;">🎲 주사위와 러너</strong>
+          <p style="font-size: 13px; color: var(--muted); line-height: 1.5;">4개의 주사위를 짝지어 숫자를 합산합니다. 한 턴에 사용할 수 있는 흰색 러너는 최대 3개입니다.</p>
+        </div>
+        <div>
+          <strong style="color: #e84040; display: block; font-size: 14px; margin-bottom: 4px;">💥 버스트 (Bust)</strong>
+          <p style="font-size: 13px; color: var(--muted); line-height: 1.5;">더 이상 러너를 전진시킬 수 있는 주사위 조합이 없다면 버스트가 되며 이번 턴의 진행 기록을 모두 잃습니다.</p>
+        </div>
+      </div>
     </div>
-    <div style="margin-bottom: 16px;">
-      <strong style="color: var(--gold); display: block; font-size: 14px; margin-bottom: 4px;">🎲 주사위와 러너</strong>
-      <p style="font-size: 13px; color: var(--muted); line-height: 1.5;">4개의 주사위를 짝지어 숫자를 합산합니다. 한 턴에 사용할 수 있는 흰색 러너는 최대 3개입니다.</p>
-    </div>
-    <div>
-      <strong style="color: #e84040; display: block; font-size: 14px; margin-bottom: 4px;">💥 버스트 (Bust)</strong>
-      <p style="font-size: 13px; color: var(--muted); line-height: 1.5;">더 이상 러너를 전진시킬 수 있는 주사위 조합이 없다면 버스트가 되며 이번 턴의 진행 기록을 모두 잃습니다.</p>
-    </div>
-  </div>
-</div>
+
     <div class="tab-content" id="tab-waiting">
       <div class="room-code-display">
         <div class="code" id="display-code">----</div>
@@ -252,8 +257,9 @@ input[type="text"]:focus{border-color:var(--gold);}
       <button class="btn-primary" id="start-btn" onclick="startGame()" disabled>게임 시작</button>
       <div class="status-msg" id="waiting-msg">플레이어를 기다리는 중...</div>
     </div>
+
+  </div> 
   </div>
-</div>
 
 <!-- ══ GAME ══ -->
 <div id="game">
