@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.011</title>
+<title>Can't Stop Ver.012</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
 
@@ -530,13 +530,16 @@ async function createRoom(){
     status:'waiting', maxPlayers:selectedCount, host:myId,
     players:{[myId]:{name:myName,colorIndex:0}}
   });
+  
+  // ─── [추가] 브라우저에 내 정보 저장 ───
+  localStorage.setItem('cantstop_session', JSON.stringify({ roomCode, myId, myName }));
+  // ─────────────────────────────────────
+
   document.getElementById('display-code').textContent=roomCode;
   document.getElementById('game-room-code').textContent=roomCode;
-
-  // ─── 아래 두 줄을 추가하세요 ───
-  switchTab('waiting'); 
-  listenRoom(); 
+  switchTab('waiting'); listenRoom();
 }
+
 window.createRoom=createRoom;
 
 async function joinRoom(){
@@ -552,6 +555,11 @@ async function joinRoom(){
   if(plist.length>=room.maxPlayers){toast('방이 꽉 찼습니다');return;}
   myId=genId(); roomCode=code;
   await update(ref(db,'rooms/'+code+'/players/'+myId),{name:myName,colorIndex:plist.length});
+
+  // ─── [추가] 브라우저에 내 정보 저장 ───
+  localStorage.setItem('cantstop_session', JSON.stringify({ roomCode, myId, myName }));
+  // ─────────────────────────────────────
+
   document.getElementById('display-code').textContent=roomCode;
   document.getElementById('game-room-code').textContent=roomCode;
   switchTab('waiting'); listenRoom();
@@ -1151,6 +1159,25 @@ window.sendChat = sendChat;
 window.stopTurn = stopTurn;
 window.rollDice = rollDice;
 window.rematch = rematch;
+
+window.addEventListener('load', async () => {
+  const session = localStorage.getItem('cantstop_session');
+  if (session) {
+    const data = JSON.parse(session);
+    roomCode = data.roomCode;
+    myId = data.myId;
+    myName = data.myName;
+
+    const snap = await get(ref(db, 'rooms/' + roomCode));
+    if (snap.exists() && snap.val().players[myId]) {
+      document.getElementById('display-code').textContent = roomCode;
+      document.getElementById('game-room-code').textContent = roomCode;
+      listenRoom(); // 서버 리스너 즉시 가동
+    } else {
+      localStorage.removeItem('cantstop_session'); // 유효하지 않은 세션 삭제
+    }
+  }
+});
 
 </script>
 </body>
