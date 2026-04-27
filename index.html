@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.012</title>
+<title>Can't Stop Ver.013</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1210,37 +1210,50 @@ async function rollDice(){
 }
 window.rollDice=rollDice;
 
-async function clickColumn(col,adv){
-  col=parseInt(col);adv=parseInt(adv)||1;
+async function clickColumn(col, adv){
+  col = parseInt(col); adv = parseInt(adv) || 1;
   if(!localGame) return;
-  const g=localGame;
-  if(g.playerOrder[g.currentTurnIndex]!==myId) return;
-  if(g.phase!=='choose') return;
+  const g = localGame;
+  if(g.playerOrder[g.currentTurnIndex] !== myId) return;
+  if(g.phase !== 'choose') return;
 
-  const runners={...(g.runners||{})};
-  const columns=JSON.parse(JSON.stringify(g.columns||{}));
-  const selected=[...(g.selectedThisRoll||[])];
+  const runners = { ...(g.runners || {}) };
+  const columns = JSON.parse(JSON.stringify(g.columns || {}));
+  const selected = [ ...(g.selectedThisRoll || []) ];
 
-  if(!canAdvance(col,runners,columns,myId)){toast('이 열은 선택할 수 없습니다');return;}
+  // ─── [보완된 체크 로직] ───
+  // 현재 이 열에 러너가 없고, 이미 사용 중인 러너가 3개라면 무조건 차단
+  const isNewPath = runners[col] === undefined;
+  if (isNewPath && Object.keys(runners).length >= MAX_RUNNERS) {
+    toast('러너 3개를 모두 사용 중입니다!');
+    return;
+  }
+  // ─────────────────────────
 
-  const colData=columns[col]||{positions:{},captured:null};
-  const curPos=runners[col]!==undefined?runners[col]:(colData.positions?.[myId]||0);
-  const size=COL_SIZES[col];
-  runners[col]=Math.min(curPos+adv,size);
+  if(!canAdvance(col, runners, columns, myId)) {
+    toast('이 열은 더 이상 전진할 수 없습니다');
+    return;
+  }
+
+  const colData = columns[col] || {positions:{}, captured:null};
+  const curPos = runners[col] !== undefined ? runners[col] : (colData.positions?.[myId] || 0);
+  const size = COL_SIZES[col];
+  
+  runners[col] = Math.min(curPos + adv, size);
   selected.push(col);
   sfxSelect();
 
-  const isDone=adv>=2||selected.length>=2||
-    computeClickable(g.dice,runners,columns,myId,selected).length===0;
-  const nextClickable=isDone?[]:computeClickable(g.dice,runners,columns,myId,selected);
-  const logEntry=`<b>${escHtml(g.players[myId].name)}</b> ↑ 열 ${col}${adv>=2?' ×2':''}`;
+  const isDone = adv >= 2 || selected.length >= 2 || 
+                 computeClickable(g.dice, runners, columns, myId, selected).length === 0;
+  const nextClickable = isDone ? [] : computeClickable(g.dice, runners, columns, myId, selected);
+  const logEntry = `<b>${escHtml(g.players[myId].name)}</b> ↑ 열 ${col}${adv >= 2 ? ' (×2)' : ''}`;
 
-  await update(ref(db,'rooms/'+roomCode+'/game'),{
+  await update(ref(db, 'rooms/' + roomCode + '/game'), {
     runners,
-    selectedThisRoll:isDone?[]:selected,
-    clickableColumns:isDone?[]:nextClickable,
-    phase:isDone?'roll':'choose',
-    log:[...(g.log||[]),logEntry]
+    selectedThisRoll: isDone ? [] : selected,
+    clickableColumns: isDone ? [] : nextClickable,
+    phase: isDone ? 'roll' : 'choose',
+    log: [...(g.log || []), logEntry]
   });
 }
 window.clickColumn=clickColumn;
