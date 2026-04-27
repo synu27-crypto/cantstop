@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.011</title>
+<title>Can't Stop Ver.012</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
 
@@ -418,6 +418,10 @@ async function createRoom(){
   });
   document.getElementById('display-code').textContent=roomCode;
   document.getElementById('game-room-code').textContent=roomCode;
+
+  // ─── 아래 두 줄을 추가하세요 ───
+  switchTab('waiting'); 
+  listenRoom(); 
 }
 window.createRoom=createRoom;
 
