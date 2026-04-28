@@ -292,8 +292,9 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   border:1px solid var(--border);
   border-radius:var(--radius);
   backdrop-filter:blur(16px);
-  overflow: visible !important; /* 👈 튀어나온 말풍선을 자르지 않도록 변경! */
+  overflow: hidden; /* 👈 다시 문을 닫습니다! 안 그러면 채팅창이 주사위를 밖으로 밀어내요! */
 }
+
 .panel-title{
   font-family:'Cinzel',serif;font-size:11px;
   letter-spacing:3px;color:var(--muted2);
@@ -305,12 +306,12 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
 /* 왼쪽: 플레이어 */
 .left-panel{
   display:flex;flex-direction:column;
+  overflow: visible !important; /* 👈 플레이어 구역만 예외로 열어줍니다! */
 }
 #player-list{
-  flex:1;
-  padding:10px;
+  flex:1;overflow-y:auto;padding:10px;
   display:flex;flex-direction:column;gap:7px;
-  overflow: visible !important; /* 👈 여기서도 말풍선이 잘리지 않게 허용! */
+  overflow: visible !important; /* 👈 여기도 같이 열어줍니다! */
 }
 
 /* 플레이어 카드 */
@@ -1150,6 +1151,7 @@ let roomCode='', myId='', myName='', selectedCount=4;
 let localGame=null;
 let chatListening=false;
 let prevPhase='';
+let prevTurnId='';
 let cellSize=34;
 let isProcessingClick=false;
 let isSpectator=false;
@@ -1313,6 +1315,26 @@ function sfxChat(){
     osc(c,1047,'sine',0.08,0,0.06);
     osc(c,1319,'sine',0.06,0.05,0.08);
     osc(c,1568,'sine',0.04,0.1,0.06);
+  }catch(e){}
+}
+
+// 💬 채팅 — 눈 결정 소리
+function sfxChat(){
+  try{
+    const c=getAudio();
+    osc(c,1047,'sine',0.08,0,0.06);
+    osc(c,1319,'sine',0.06,0.05,0.08);
+    osc(c,1568,'sine',0.04,0.1,0.06);
+  }catch(e){}
+}
+
+// 🔔 내 턴 알림음 — 경쾌한 크리스탈 차임벨 (이 부분을 추가!)
+function sfxMyTurn(){
+  try{
+    const c=getAudio();
+    osc(c, 1047, 'sine', 0.12, 0, 0.15);
+    osc(c, 1319, 'sine', 0.12, 0.08, 0.2);
+    osc(c, 1760, 'sine', 0.1, 0.16, 0.35);
   }catch(e){}
 }
 
@@ -1927,6 +1949,13 @@ function renderGame(room){
   const cid=g.playerOrder[g.currentTurnIndex];
   const cp=g.players[cid];
   if(!cp) return;
+  
+  // 🎈 [내 턴 알림 로직] 턴이 나에게로 막 넘어왔을 때만 차임벨 소리 재생!
+  if (cid === myId && prevTurnId !== myId) {
+    sfxMyTurn();
+  }
+  prevTurnId = cid; // 이번 턴 주인을 기억해둠
+
   const badge=document.getElementById('turn-badge');
   badge.textContent=cid===myId?'🎯 내 차례':`${P_ICONS[cp.colorIndex]} ${cp.name}의 차례`;
   badge.style.color=`var(${P_COLORS[cp.colorIndex]})`;
