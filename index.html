@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.02</title>
+<title>Can't Stop Ver.025</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1047,11 +1047,11 @@ const EMOTIS = [
   { label:'🎲', text:'🎲' },
   { label:'🏔', text:'🏔' },
   { label:'💥', text:'💥 버스트!' },
-  { label:'👑', text:'👑 내가 이긴다!' },
-  { label:'😱', text:'😱 헉!' },
-  { label:'🤣', text:'🤣 ㅋㅋㅋ' },
-  { label:'😭', text:'😭 왜이래' },
-  { label:'🔥', text:'🔥 달려라!' },
+  { label:'👑', text:'👑 앙이라고 함' },
+  { label:'😱', text:'😱 하지마' },
+  { label:'🤣', text:'🤣 ㅋㅋㅋㅎㅎㅎ' },
+  { label:'😭', text:'😭 왜 이래' },
+  { label:'🔥', text:'🔥 드가를 드가' },
   { label:'🤔', text:'🤔 음...' },
   { label:'😤', text:'😤 !' },
   { label:'🥳', text:'🥳 와아!' },
@@ -1064,26 +1064,39 @@ const EMOTIS = [
 
 // ── 이모티 버튼 — 말풍선으로 표시 ──
 const emotiRow = document.getElementById('emoti-row');
-// activeSpeechBubbles: playerId → timeout
-const activeBubbles = {};
+const activeBubbles = {}; // 👈 말풍선 상태(텍스트) 저장용 객체
+
+// ── 이모티 버튼 — 말풍선으로 표시 ──
+const emotiRow = document.getElementById('emoti-row');
+const activeBubbles = {}; // 👈 말풍선 상태(텍스트) 저장용 객체
 
 function showSpeechBubble(pid, text){
-  // 내 카드 DOM 찾기
+  if(activeBubbles[pid]) clearTimeout(activeBubbles[pid].timeout);
+  
+  // 상태 저장 (화면이 새로 그려질 때 복구하기 위함)
+  activeBubbles[pid] = {
+    text: text,
+    timeout: setTimeout(()=>{
+      delete activeBubbles[pid];
+      const card = document.querySelector(`.player-card[data-pid="${pid}"]`);
+      if(card){
+        const old = card.querySelector('.speech-bubble');
+        if(old) old.remove();
+      }
+    }, 3500)
+  };
+  
+  // DOM에 띄우기
   const card = document.querySelector(`.player-card[data-pid="${pid}"]`);
   if(!card) return;
-  // 기존 버블 제거
+  
   const old = card.querySelector('.speech-bubble');
   if(old) old.remove();
-  if(activeBubbles[pid]) clearTimeout(activeBubbles[pid]);
+  
   const bubble = document.createElement('div');
-  bubble.className = 'speech-bubble';
+  bubble.className = 'speech-bubble show';
   bubble.textContent = text;
   card.appendChild(bubble);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>bubble.classList.add('show')));
-  activeBubbles[pid] = setTimeout(()=>{
-    bubble.classList.remove('show');
-    setTimeout(()=>bubble.remove(), 250);
-  }, 3500);
 }
 
 EMOTIS.forEach(e => {
@@ -1092,8 +1105,11 @@ EMOTIS.forEach(e => {
   btn.textContent = e.label;
   btn.title = e.text;
   btn.onclick = async () => {
-    if(!localGame || !localGame.players[myId]) return;
-    // Firebase에 이모티 이벤트 push
+    // 관전자이거나 플레이어 목록에 없으면 튕겨냄
+    if (isSpectator || !localGame || !localGame.players[myId]) {
+      toast('관전자는 이모티콘을 띄울 카드가 없습니다.');
+      return;
+    }
     await push(ref(db,'rooms/'+roomCode+'/emotis'),{
       pid: myId, text: e.text, ts: Date.now()
     });
@@ -1551,14 +1567,28 @@ async function startGame(){
 window.startGame=startGame;
 
 async function rematch(){
-  const snap=await get(ref(db,'rooms/'+roomCode));
+  // 🚫 방장 권한 체크: 방장만 새 게임을 시작할 수 있음
+  if (!localGame || localGame.host !== myId) {
+    toast('방장만 재등정을 시작할 수 있습니다.');
+    return;
+  }
+
+  const snap = await get(ref(db,'rooms/'+roomCode));
   if(!snap.exists()) return;
-  const room=snap.val();
-  const players=Object.entries(room.players).map(([id,p])=>({id,...p}));
-  const rotated=[...players.slice(1),...players.slice(0,1)];
-  await update(ref(db,'rooms/'+roomCode),{status:'playing',game:buildGame(rotated,room.host),chat:{}});
+  const room = snap.val();
+  const players = Object.entries(room.players).map(([id,p])=>({id,...p}));
+  
+  // 턴 순서 섞기 (이전 1턴이 맨 마지막으로 가도록)
+  const rotated = [...players.slice(1), ...players.slice(0,1)];
+  
+  // 새 게임 데이터 덮어쓰기 (채팅 내역은 유지)
+  await update(ref(db,'rooms/'+roomCode), {
+    status: 'playing',
+    game: buildGame(rotated, room.host),
+    chat: room.chat || {} // 👈 기존에는 빈 괄호 {} 였으나 이전 채팅을 남기도록 변경
+  });
 }
-window.rematch=rematch;
+window.rematch = rematch;
 
 function buildGame(players,host){
   const columns={};
@@ -1798,11 +1828,21 @@ window.resetRoom=resetRoom;
 async function sendChat(){
   const input=document.getElementById('chat-input');
   const msg=input.value.trim();
-  if(!msg||!localGame) return;
+  if(!msg) return;
   input.value='';
-  const p=localGame.players[myId];
-  if(!p) return;
-  await push(ref(db,'rooms/'+roomCode+'/chat'),{name:p.name,colorIndex:p.colorIndex,msg,ts:Date.now()});
+  
+  let pName = myName;
+  let pColor = -1; // 관전자 고유 식별 번호
+
+  // 방에 참가한 정상 플레이어인지 확인
+  if (!isSpectator && localGame && localGame.players[myId]) {
+    pName = localGame.players[myId].name;
+    pColor = localGame.players[myId].colorIndex;
+  } else {
+    pName = "[관전] " + myName; // 관전자는 꼬리표 추가
+  }
+  
+  await push(ref(db,'rooms/'+roomCode+'/chat'),{name: pName, colorIndex: pColor, msg, ts:Date.now()});
 }
 window.sendChat=sendChat;
 
@@ -1814,7 +1854,13 @@ function listenChat(){
     list.innerHTML='';
     msgs.slice(-30).forEach(m=>{
       const item=document.createElement('div');item.className='chat-msg';
-      item.innerHTML=`<span class="sender" style="color:var(${P_COLORS[m.colorIndex]});">${P_ICONS[m.colorIndex]} ${escHtml(m.name)}</span><br><span class="msg-text">${escHtml(m.msg)}</span>`;
+      
+      // 관전자(-1)와 참가자 색상/아이콘 멋지게 구분
+      const isSpec = m.colorIndex === -1;
+      const colorVar = isSpec ? '#d4b866' : `var(${P_COLORS[m.colorIndex]})`;
+      const icon = isSpec ? '👁' : P_ICONS[m.colorIndex];
+      
+      item.innerHTML=`<span class="sender" style="color:${colorVar};">${icon} ${escHtml(m.name)}</span><br><span class="msg-text">${escHtml(m.msg)}</span>`;
       list.appendChild(item);
     });
     list.scrollTop=list.scrollHeight;
@@ -1845,10 +1891,14 @@ function listenEmotis() {
 //  렌더링
 // ═══════════════════════════════
 function renderGame(room){
-  const g=room.game;if(!g) return;
-  localGame=g;
+  const g = room.game; 
+  if(!g) return;
+  localGame = g;
 
-  if(g.phase==='bust'&&prevPhase!=='bust'){
+  // 🎈 [핵심 추가] 게임을 새로 그릴 때 무조건 승자 팝업을 먼저 치워줍니다.
+  document.getElementById('winner-overlay').classList.remove('show');
+
+  if(g.phase === 'bust' && prevPhase !== 'bust'){
     sfxBust();
     const overlay=document.getElementById('bust-overlay');
     const grid=document.getElementById('game-grid');
@@ -1998,6 +2048,14 @@ function renderPlayers(g,room){
       </div>`;
       
     list.appendChild(card);
+
+    // 🎈 [핵심 수정] 화면이 새로 그려져도 기존 말풍선 즉시 복구!
+    if (typeof activeBubbles !== 'undefined' && activeBubbles[pid]) {
+      const bubble = document.createElement('div');
+      bubble.className = 'speech-bubble show';
+      bubble.textContent = activeBubbles[pid].text;
+      card.appendChild(bubble);
+    }
   });
 }
 
