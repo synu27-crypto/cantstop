@@ -1066,10 +1066,6 @@ const EMOTIS = [
 const emotiRow = document.getElementById('emoti-row');
 const activeBubbles = {}; // 👈 말풍선 상태(텍스트) 저장용 객체
 
-// ── 이모티 버튼 — 말풍선으로 표시 ──
-const emotiRow = document.getElementById('emoti-row');
-const activeBubbles = {}; // 👈 말풍선 상태(텍스트) 저장용 객체
-
 function showSpeechBubble(pid, text){
   if(activeBubbles[pid]) clearTimeout(activeBubbles[pid].timeout);
   
