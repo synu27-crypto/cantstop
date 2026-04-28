@@ -1784,6 +1784,25 @@ function listenChat(){
   });
 }
 
+// ── 이모티콘 수신 리스너 ──
+let lastEmotiTs = Date.now(); // 처음 접속 시 과거 이모티콘은 무시하기 위한 기준 시간
+
+function listenEmotis() {
+  onValue(ref(db, 'rooms/' + roomCode + '/emotis'), snap => {
+    if (!snap.exists()) return;
+    const emotis = Object.values(snap.val());
+    
+    emotis.forEach(e => {
+      // 내가 접속한 이후에 생성된 새로운 이모티콘만 화면에 띄움
+      if (e.ts > lastEmotiTs) {
+        showSpeechBubble(e.pid, e.text);
+        lastEmotiTs = Math.max(lastEmotiTs, e.ts);
+        sfxChat(); // 말풍선이 뜰 때 뿅! 소리 추가
+      }
+    });
+  });
+}
+
 // ═══════════════════════════════
 //  렌더링
 // ═══════════════════════════════
@@ -1914,16 +1933,21 @@ function renderPlayers(g,room){
   list.innerHTML='';
   const cid=g.playerOrder[g.currentTurnIndex];
   const isHost=g.host===myId;
+  
   g.playerOrder.forEach(pid=>{
     const p=g.players[pid];if(!p) return;
     const c=P_COLORS[p.colorIndex];
     const captured=p.capturedCols||[];
+    
     const card=document.createElement('div');
     card.className='player-card'+(pid===cid?' active':'');
     card.style.color=`var(${c})`;
+    card.dataset.pid = pid; // 👈 말풍선 위치를 찾기 위한 필수 데이터
+    
     const meBadge=pid===myId?`<span class="p-me-badge">나</span>`:'';
     const kickBtn=(isHost&&pid!==myId)?`<button class="kick-btn" onclick="kickPlayer('${pid}','${escAttr(p.name)}')">강퇴</button>`:'';
     const turnArrow=pid===cid?`<span style="font-size:11px;">🎯</span>`:'';
+    
     card.innerHTML=`
       <div class="p-name">
         <span style="font-size:15px;">${P_ICONS[p.colorIndex]}</span>
@@ -1934,6 +1958,7 @@ function renderPlayers(g,room){
       <div class="captured-cols">
         ${captured.map(col=>`<div class="col-badge" style="background:var(${c});">${col}</div>`).join('')}
       </div>`;
+      
     list.appendChild(card);
   });
 }
