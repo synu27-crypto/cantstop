@@ -1895,7 +1895,6 @@ function listenChat(){
       list.appendChild(item);
     });
     list.scrollTop=list.scrollHeight;
-    sfxChat();
   });
 }
 
@@ -1912,7 +1911,7 @@ function listenEmotis() {
       if (e.ts > lastEmotiTs) {
         showSpeechBubble(e.pid, e.text);
         lastEmotiTs = Math.max(lastEmotiTs, e.ts);
-        sfxChat(); // 말풍선이 뜰 때 뿅! 소리 추가
+    sfxChat();
       }
     });
   });
