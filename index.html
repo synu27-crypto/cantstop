@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can't Stop Ver.025</title>
+<title>Can't Stop Ver.026</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -58,8 +58,6 @@ body {
   );
   overflow:hidden;
 }
-
-/* 별 레이어 */
 #mountain-bg::before {
   content:'';
   position:absolute;inset:0;
@@ -86,8 +84,6 @@ body {
 @keyframes starTwinkle {
   from{opacity:0.8;}to{opacity:1;}
 }
-
-/* 오로라 */
 #mountain-bg::after {
   content:'';
   position:absolute;top:0;left:0;right:0;height:45%;
@@ -101,15 +97,11 @@ body {
   from{opacity:0.6;transform:scaleX(1);}
   to{opacity:1;transform:scaleX(1.05);}
 }
-
-/* SVG 산맥 */
 #peaks-svg {
   position:absolute;bottom:0;left:0;right:0;
   width:100%;height:65%;
   pointer-events:none;
 }
-
-/* 눈 내리기 */
 .snowflake {
   position:absolute;top:-20px;
   animation: snowFall linear infinite;
@@ -146,7 +138,6 @@ body {
   align-items:center;justify-content:center;
   padding:32px 20px;overflow-y:auto;z-index:10;
 }
-
 .logo-wrap{text-align:center;margin-bottom:28px;}
 .logo{
   font-family:'Cinzel',serif;
@@ -164,7 +155,6 @@ body {
   text-transform:uppercase;margin-top:10px;
   font-family:'Space Mono',monospace;
 }
-
 .lobby-card{
   background:rgba(10,18,35,0.92);
   border:1px solid var(--border2);
@@ -174,7 +164,6 @@ body {
   box-shadow:0 40px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08);
   backdrop-filter:blur(20px);
 }
-
 .lobby-tabs{
   display:flex;gap:4px;background:rgba(0,0,0,0.3);
   border-radius:12px;padding:4px;margin-bottom:24px;
@@ -187,7 +176,6 @@ body {
 }
 .tab-btn.active{background:rgba(100,160,255,0.15);color:var(--ice);}
 .tab-content{display:none;}.tab-content.active{display:block;}
-
 label{display:block;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:7px;}
 input[type="text"]{
   width:100%;background:rgba(0,0,0,0.4);border:1px solid var(--border);
@@ -196,7 +184,6 @@ input[type="text"]{
   margin-bottom:16px;outline:none;transition:all .2s;
 }
 input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,180,255,0.1);}
-
 .player-count-selector{display:flex;gap:7px;margin-bottom:16px;}
 .count-btn{
   flex:1;padding:11px;border:1px solid var(--border);border-radius:9px;
@@ -209,7 +196,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   background:rgba(100,180,255,0.1);
   box-shadow:0 0 12px rgba(100,180,255,0.2);
 }
-
 .btn-primary{
   width:100%;padding:14px;
   background:linear-gradient(135deg, rgba(100,160,255,0.3), rgba(160,220,255,0.2));
@@ -224,7 +210,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   background:linear-gradient(135deg, rgba(100,160,255,0.45), rgba(160,220,255,0.3));
 }
 .btn-primary:disabled{opacity:.3;cursor:not-allowed;transform:none;}
-
 .room-code-display{
   background:rgba(0,0,0,0.4);border:1px dashed var(--ice3);
   border-radius:12px;padding:18px;text-align:center;margin-bottom:16px;
@@ -235,7 +220,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   text-shadow:0 0 20px rgba(100,200,255,0.5);
 }
 .room-code-display .hint{font-size:11px;color:var(--muted);margin-top:4px;}
-
 .waiting-players{margin-bottom:16px;}
 .player-slot{
   display:flex;align-items:center;gap:11px;
@@ -245,7 +229,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
 }
 .player-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .status-msg{text-align:center;font-size:12px;color:var(--muted);padding:10px;}
-
 .rules-container{
   background:rgba(0,0,0,0.2);border-radius:10px;padding:16px;
   border:1px solid var(--border);max-height:260px;overflow-y:auto;
@@ -253,16 +236,12 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
 
 /* ══ 게임 레이아웃 ══ */
 #game{display:none;position:fixed;inset:0;padding:8px;overflow:hidden;z-index:5;}
-
-/* 4컬럼 그리드: 플레이어목록 | 보드 | 로그 | 채팅 */
 .game-grid{
   display:grid;
   grid-template-columns:185px 1fr 190px 195px;
   grid-template-rows:44px 1fr 142px;
   gap:8px;height:100%;
 }
-
-/* 헤더 */
 .game-header{
   grid-column:1/-1;display:flex;align-items:center;
   justify-content:space-between;padding:0 4px;
@@ -285,16 +264,13 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
 }
 .room-info{font-size:11px;color:var(--muted);}
 .room-info strong{color:var(--ice);font-family:'Space Mono',monospace;letter-spacing:2px;}
-
-/* 패널 공통 */
 .panel{
   background:rgba(8,16,32,0.88);
   border:1px solid var(--border);
   border-radius:var(--radius);
   backdrop-filter:blur(16px);
-  overflow: hidden; /* 👈 다시 문을 닫습니다! 안 그러면 채팅창이 주사위를 밖으로 밀어내요! */
+  overflow: hidden;
 }
-
 .panel-title{
   font-family:'Cinzel',serif;font-size:11px;
   letter-spacing:3px;color:var(--muted2);
@@ -302,23 +278,19 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   padding:10px 14px 8px;flex-shrink:0;
   text-transform:uppercase;
 }
-
-/* 왼쪽: 플레이어 */
 .left-panel{
   display:flex;flex-direction:column;
-  overflow: visible !important; /* 👈 플레이어 구역만 예외로 열어줍니다! */
+  overflow: visible !important;
 }
 #player-list{
   flex:1;overflow-y:auto;padding:10px;
   display:flex;flex-direction:column;gap:7px;
-  overflow: visible !important; /* 👈 여기도 같이 열어줍니다! */
+  overflow: visible !important;
 }
-
-/* 플레이어 카드 */
 .player-card{
   border-radius:10px;padding:10px 12px;
   border:1.5px solid transparent;transition:all .25s;
-  background:rgba(0,0,0,0.3);position:relative;overflow:hidden;
+  background:rgba(0,0,0,0.3);position:relative;overflow:visible;
 }
 .player-card::before{
   content:'';position:absolute;left:0;top:0;bottom:0;
@@ -327,7 +299,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
 }
 .player-card.active{border-color:currentColor;background:rgba(255,255,255,0.04);}
 .player-card.active::before{opacity:1;}
-
 .p-name{
   font-weight:700;font-size:13px;margin-bottom:3px;
   display:flex;align-items:center;gap:6px;flex-wrap:wrap;
@@ -337,8 +308,8 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   background:currentColor;color:#040810;
   padding:1px 5px;border-radius:3px;font-weight:700;
 }
-.p-score{font-size:10px;color:var(--muted);margin-bottom:5px;}
-.captured-cols{display:flex;flex-wrap:wrap;gap:3px;}
+.p-score{font-size:10px;color:var(--muted);margin-bottom:4px;}
+.captured-cols{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;}
 .col-badge{
   min-width:20px;height:20px;border-radius:5px;
   display:flex;align-items:center;justify-content:center;
@@ -351,6 +322,20 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   margin-left:auto;transition:all .2s;flex-shrink:0;
 }
 .kick-btn:hover{background:rgba(255,50,50,.35);color:#fff;}
+
+/* ── 진행 퍼센트 바 ── */
+.progress-bar-wrap{
+  width:100%;height:4px;
+  background:rgba(255,255,255,0.06);
+  border-radius:2px;overflow:hidden;
+  margin-top:4px;
+}
+.progress-bar-fill{
+  height:100%;border-radius:2px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  background:currentColor;
+  opacity:0.7;
+}
 
 /* ══ 보드 ══ */
 .board-wrap{
@@ -371,10 +356,7 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   display:flex;gap:4px;align-items:flex-end;
   padding:16px 12px 10px;position:relative;z-index:1;
 }
-
 .column{display:flex;flex-direction:column;align-items:center;gap:3px;}
-
-/* 셀 */
 .cell{
   border-radius:50%;display:flex;align-items:center;justify-content:center;
   position:relative;transition:all .3s cubic-bezier(.4,0,.2,1);flex-shrink:0;
@@ -391,34 +373,25 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   background:rgba(255,255,255,0.15);
 }
 .cell.captured-cell{border-color:transparent;}
-
-/* ══ 크리스탈 말 (Peg) ══ */
 .peg-wrap{
   display:flex;align-items:center;justify-content:center;
   width:100%;height:100%;position:relative;
   gap:1px;flex-wrap:wrap;
 }
-
 .peg {
   position:relative;
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
 }
-
-/* 크리스탈 몸체 */
 .peg-crystal {
   position:relative;
   width:100%;height:100%;
 }
-
-/* 크리스탈 SVG 말 */
 .peg svg {
   width:100%;height:100%;
   filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6));
   transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
-/* 러너 링 - 반짝이는 눈결정 */
 .runner-ring{
   position:absolute;inset:0;border-radius:50%;
   border:2px solid rgba(255,255,255,0.9);
@@ -439,8 +412,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
     transform:scale(1.05);
   }
 }
-
-/* 열 번호 */
 .col-num{
   font-family:'Cinzel',serif;font-weight:700;color:var(--muted);
   border-radius:7px;display:flex;align-items:center;justify-content:center;
@@ -469,9 +440,7 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
 }
 
 /* ══ 로그 패널 ══ */
-.log-panel{
-  display:flex;flex-direction:column;
-}
+.log-panel{display:flex;flex-direction:column;}
 .log-list{
   flex:1;overflow-y:auto;padding:8px 12px;
   display:flex;flex-direction:column-reverse;gap:2px;
@@ -485,9 +454,7 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
 .log-item.ev-capture b.cap-text{color:var(--ice);}
 
 /* ══ 채팅 패널 ══ */
-.chat-panel{
-  display:flex;flex-direction:column;
-}
+.chat-panel{display:flex;flex-direction:column;}
 .chat-msg-list{
   flex:1;overflow-y:auto;padding:8px 12px;
   display:flex;flex-direction:column;gap:4px;
@@ -500,7 +467,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
 }
 .chat-msg .sender{font-weight:700;font-size:10px;}
 .chat-msg .msg-text{color:var(--text);}
-
 .chat-input-area{
   padding:8px 10px 10px;
   border-top:1px solid var(--border);
@@ -519,7 +485,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   font-size:18px;transition:all .15s;padding:0;
 }
 .emoti-btn:hover{background:rgba(100,180,255,0.15);border-color:var(--ice3);transform:scale(1.1);}
-
 .chat-input-row{display:flex;gap:7px;align-items:stretch;}
 .chat-input{
   flex:1;min-width:0;background:rgba(0,0,0,0.4);
@@ -549,10 +514,7 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   border-radius:0 0 var(--radius) var(--radius);
   backdrop-filter:blur(16px);
 }
-
 .dice-row{display:flex;gap:10px;align-items:center;flex-shrink:0;}
-
-/* 나무 주사위 */
 .die{
   border-radius:10px;display:flex;align-items:center;justify-content:center;
   font-family:'Cinzel',serif;font-weight:700;color:#2a1a08;
@@ -576,8 +538,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   background:linear-gradient(145deg, rgba(255,255,255,0.3) 0%, transparent 55%);
   pointer-events:none;
 }
-
-/* 주사위 굴리기 애니메이션 */
 @keyframes dieRollFull{
   0%  {transform:rotate(0deg)   scale(1);}
   10% {transform:rotate(-15deg) scale(1.08) translateY(-4px);}
@@ -588,9 +548,22 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   85% {transform:rotate(2deg)   scale(0.99);}
   100%{transform:rotate(0deg)   scale(1);}
 }
-.die.rolling{
-  animation:dieRollFull 0.12s ease-in-out infinite;
+.die.rolling{animation:dieRollFull 0.12s ease-in-out infinite;}
+
+/* ── 주사위 조합 힌트 표시 ── */
+.dice-pairs-hint{
+  display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;
 }
+.pair-chip{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;
+  border:1px solid var(--border2);background:rgba(0,0,0,0.3);
+  font-family:'Space Mono',monospace;
+  transition:all .2s;
+}
+.pair-chip.possible{border-color:rgba(100,200,255,0.5);color:var(--ice);}
+.pair-chip.impossible{opacity:0.3;text-decoration:line-through;color:var(--muted);}
+.pair-chip.chosen-pair{border-color:var(--ice3);background:rgba(100,180,255,0.15);color:var(--ice2);}
 
 .dice-info{flex:1;min-width:140px;}
 .dice-msg{font-size:14px;color:var(--text);font-weight:700;}
@@ -611,7 +584,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   background:linear-gradient(135deg, rgba(100,160,255,0.5), rgba(60,120,220,0.6));
 }
 .btn-roll:disabled{opacity:.25;cursor:not-allowed;box-shadow:none;}
-
 .btn-stop{
   padding:10px 24px;
   background:rgba(0,0,0,0.3);
@@ -622,7 +594,33 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
 .btn-stop:hover:not(:disabled){border-color:var(--text);background:rgba(255,255,255,0.05);}
 .btn-stop:disabled{opacity:.25;cursor:not-allowed;}
 
-/* 관리자 */
+/* ── 턴 타이머 ── */
+.timer-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  flex-shrink:0;
+}
+.timer-ring{
+  position:relative;width:44px;height:44px;
+}
+.timer-ring svg{transform:rotate(-90deg);}
+.timer-ring-bg{fill:none;stroke:rgba(255,255,255,0.08);stroke-width:3;}
+.timer-ring-fill{
+  fill:none;stroke:var(--ice3);stroke-width:3;
+  stroke-dasharray:113;
+  stroke-dashoffset:0;
+  stroke-linecap:round;
+  transition:stroke-dashoffset 1s linear, stroke .5s;
+}
+.timer-ring-fill.urgent{stroke:#ff5577;}
+.timer-text{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;
+  color:var(--text);
+}
+.timer-text.urgent{color:#ff5577;}
+.timer-label{font-size:9px;color:var(--muted);letter-spacing:1px;}
+
+/* ── 관리자 ── */
 #admin-panel{
   display:none;gap:8px;
   border-top:1px solid var(--border);
@@ -638,7 +636,7 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
 .btn-admin-reset{background:rgba(200,50,50,.2);color:#faa;border:1px solid rgba(200,50,50,.3);}
 .btn-admin-reset:hover{background:rgba(200,50,50,.35);}
 
-/* 승자 오버레이 */
+/* ══ 승자 오버레이 ══ */
 #winner-overlay{
   display:none;position:fixed;inset:0;
   background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);
@@ -646,7 +644,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   flex-direction:column;gap:22px;
 }
 #winner-overlay.show{display:flex;}
-
 @keyframes winnerEntrance{
   0%{opacity:0;transform:scale(.75) translateY(40px);}
   60%{transform:scale(1.04) translateY(-5px);}
@@ -700,7 +697,7 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
 }
 .btn-lobby:hover{border-color:var(--text);}
 
-/* 토스트 */
+/* ══ 토스트 ══ */
 #toast{
   position:fixed;bottom:28px;left:50%;
   transform:translateX(-50%) translateY(20px);
@@ -710,8 +707,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   backdrop-filter:blur(10px);
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-/* 스크롤바 */
 ::-webkit-scrollbar{width:3px;height:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(100,180,255,0.2);border-radius:3px;}
@@ -740,7 +735,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   background:rgba(180,150,80,0.2);border:1px solid rgba(200,170,80,0.4);
   color:#d4b866;letter-spacing:1px;margin-left:6px;
 }
-/* 관전자 오버레이 배너 */
 #spectator-banner{
   display:none;
   position:fixed;bottom:160px;left:50%;transform:translateX(-50%);
@@ -755,34 +749,48 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
 /* ══ 이모티 말풍선 ══ */
 .speech-bubble{
   position:absolute;
-  bottom:calc(100% + 8px);
-  left:50%;transform:translateX(-50%) scale(0.7);
-  background:rgba(8,20,40,0.96);
+  bottom:calc(100% + 10px);
+  left:50%;
+  transform:translateX(-50%) scale(0.7) translateY(10px);
+  background:rgba(8,20,40,0.97);
   border:1.5px solid var(--border2);
   border-radius:14px;
   padding:7px 13px;
-  font-size:15px;
+  font-size:16px;
   white-space:nowrap;
   pointer-events:none;
-  z-index:100;
+  z-index:9999;
   opacity:0;
-  transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  transition:opacity 0.2s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
   backdrop-filter:blur(8px);
-  box-shadow:0 8px 24px rgba(0,0,0,0.5);
+  box-shadow:0 8px 28px rgba(0,0,0,0.6), 0 0 0 1px rgba(100,180,255,0.1);
 }
 .speech-bubble::after{
-  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
-  border:6px solid transparent;
-  border-top-color:var(--border2);
+  content:'';position:absolute;top:100%;left:50%;
+  transform:translateX(-50%);
+  border:7px solid transparent;
+  border-top-color:rgba(160,200,255,0.22);
+}
+.speech-bubble::before{
+  content:'';position:absolute;top:calc(100% - 1px);left:50%;
+  transform:translateX(-50%);
+  border:7px solid transparent;
+  border-top-color:rgba(8,20,40,0.97);
+  z-index:1;
 }
 .speech-bubble.show{
-  opacity:1;transform:translateX(-50%) scale(1);
+  opacity:1;
+  transform:translateX(-50%) scale(1) translateY(0);
 }
-/* 플레이어 카드에 relative 필요 */
-.player-card{
-  border-radius:10px;padding:10px 12px;
-  border:1.5px solid transparent;transition:all .25s;
-  background:rgba(0,0,0,0.3);position:relative;
+
+/* ── 내 턴 강조 펄스 ── */
+@keyframes myTurnPulse{
+  0%{box-shadow:0 0 0 0 rgba(100,200,255,0.4);}
+  70%{box-shadow:0 0 0 10px rgba(100,200,255,0);}
+  100%{box-shadow:0 0 0 0 rgba(100,200,255,0);}
+}
+.my-turn-glow{
+  animation:myTurnPulse 2s ease-out infinite;
 }
 </style>
 </head>
@@ -811,40 +819,27 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
       </linearGradient>
       <filter id="snowBlur"><feGaussianBlur stdDeviation="0.8"/></filter>
     </defs>
-
-    <!-- 뒷배경 산맥 (멀리) -->
     <path d="M0,500 L0,380 L80,280 L160,320 L240,200 L320,260 L400,140 L480,210 L560,100 L640,180 L720,80 L800,170 L880,110 L960,200 L1040,130 L1120,220 L1200,150 L1280,240 L1360,180 L1440,260 L1440,500 Z"
           fill="url(#peak3grad)" opacity="0.5"/>
-
-    <!-- 중간 산맥 -->
     <path d="M0,500 L0,400 L60,320 L140,360 L220,250 L300,300 L380,180 L460,240 L540,140 L620,200 L700,100 L780,170 L860,90 L940,180 L1020,110 L1100,200 L1180,130 L1260,210 L1340,160 L1440,240 L1440,500 Z"
           fill="url(#peak2grad)" opacity="0.7"/>
-
-    <!-- 앞 주봉 -->
     <path d="M0,500 L0,440 L100,400 L200,440 L300,350 L400,400 L500,280 L580,330 L660,220 L720,260 L780,180 L840,260 L900,200 L980,310 L1060,240 L1140,350 L1220,290 L1320,380 L1380,340 L1440,400 L1440,500 Z"
           fill="url(#peak1grad)" opacity="0.85"/>
-
-    <!-- 눈 쌓인 꼭대기 하이라이트 -->
     <path d="M500,280 L540,230 L580,260 L600,240 L660,220 L680,240 L720,210 L760,240 L780,180 L800,220 L840,200 L860,240 L880,200 L900,200 L920,230 L940,210"
           fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.5" stroke-linecap="round"
           filter="url(#snowBlur)"/>
     <path d="M500,280 L520,250 L560,270 L580,252 L620,235 L660,220 L700,235 L720,210 L750,232 L780,180 L810,210 L840,200 L870,218 L900,200"
           fill="rgba(255,255,255,0.25)"/>
-
-    <!-- 눈 쌓인 레이어 세부 -->
     <path d="M300,350 L330,310 L360,330 L380,300 L400,320 L420,290 L460,270 L500,280"
           fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
     <path d="M900,200 L940,230 L980,210 L1020,260 L1060,240"
           fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
-
-    <!-- 안개 -->
     <ellipse cx="720" cy="480" rx="800" ry="80" fill="rgba(100,140,180,0.15)"/>
     <ellipse cx="360" cy="490" rx="400" ry="50" fill="rgba(120,160,200,0.1)"/>
     <ellipse cx="1100" cy="485" rx="400" ry="55" fill="rgba(120,160,200,0.1)"/>
   </svg>
 </div>
 
-<!-- BGM -->
 <audio id="bgm-audio" loop>
   <source src="bgm.mp3" type="audio/mpeg">
 </audio>
@@ -858,7 +853,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
     <div class="logo">CAN'T STOP</div>
     <p class="logo-sub">The Push‑Your‑Luck Alpine Dice Game</p>
   </div>
-
   <div class="lobby-card">
     <div class="lobby-tabs">
       <button class="tab-btn active" onclick="switchTab('create')">방 만들기</button>
@@ -866,7 +860,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
       <button class="tab-btn" onclick="switchTab('spectate')">관전하기</button>
       <button class="tab-btn" onclick="switchTab('rules')">규칙</button>
     </div>
-
     <div class="tab-content active" id="tab-create">
       <label>닉네임</label>
       <input type="text" id="create-name" placeholder="이름을 입력하세요" maxlength="12">
@@ -878,7 +871,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
       </div>
       <button class="btn-primary" onclick="createRoom()">🏔 등정 시작</button>
     </div>
-
     <div class="tab-content" id="tab-join">
       <label>닉네임</label>
       <input type="text" id="join-name" placeholder="이름을 입력하세요" maxlength="12">
@@ -887,7 +879,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
         style="text-transform:uppercase;letter-spacing:8px;font-size:20px;text-align:center;font-family:'Space Mono',monospace;">
       <button class="btn-primary" onclick="joinRoom()">🏔 참가하기</button>
     </div>
-
     <div class="tab-content" id="tab-spectate">
       <label>닉네임 (표시용)</label>
       <input type="text" id="spectate-name" placeholder="관전자 이름" maxlength="12">
@@ -896,7 +887,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
         style="text-transform:uppercase;letter-spacing:8px;font-size:20px;text-align:center;font-family:'Space Mono',monospace;">
       <button class="btn-primary" onclick="joinSpectate()" style="background:linear-gradient(135deg,rgba(180,150,80,0.3),rgba(140,110,60,0.4));border-color:#c8a040;color:#d4b866;">👁 관전 입장</button>
     </div>
-
     <div class="tab-content" id="tab-rules">
       <div class="rules-container">
         <div style="margin-bottom:14px;">
@@ -911,13 +901,16 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
           <strong style="color:#ff6677;display:block;font-size:13px;margin-bottom:5px;">💥 버스트 (Bust)</strong>
           <p style="font-size:12px;color:var(--muted2);line-height:1.6;">전진 가능한 열이 없으면 <b style="color:#ff6677;">버스트</b>! 이번 턴 진행이 모두 취소됩니다.</p>
         </div>
-        <div>
+        <div style="margin-bottom:14px;">
           <strong style="color:var(--ice);display:block;font-size:13px;margin-bottom:5px;">✋ 멈추기</strong>
           <p style="font-size:12px;color:var(--muted2);line-height:1.6;">멈추면 러너 위치가 <b style="color:var(--text);">영구 마커</b>로 확정됩니다. 꼭대기 도달 시 해당 열을 정복합니다.</p>
         </div>
+        <div>
+          <strong style="color:#ffaa33;display:block;font-size:13px;margin-bottom:5px;">⏱ 턴 타이머</strong>
+          <p style="font-size:12px;color:var(--muted2);line-height:1.6;">각 행동(굴리기/선택)마다 <b style="color:var(--text);">90초</b> 제한이 있습니다. 시간 초과 시 자동으로 처리됩니다.</p>
+        </div>
       </div>
     </div>
-
     <div class="tab-content" id="tab-waiting">
       <div class="room-code-display">
         <div class="code" id="display-code">----</div>
@@ -933,7 +926,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
 <!-- ══ GAME ══ -->
 <div id="game">
   <div class="game-grid" id="game-grid">
-
     <div class="game-header">
       <div class="game-title">CAN'T STOP</div>
       <div class="turn-badge" id="turn-badge">-</div>
@@ -944,25 +936,17 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
         <div class="room-info">방 코드 <strong id="game-room-code"></strong></div>
       </div>
     </div>
-
-    <!-- 왼쪽: 플레이어 -->
     <div class="panel left-panel">
       <div class="panel-title">⛰ 등반대</div>
       <div id="player-list"></div>
     </div>
-
-    <!-- 보드 -->
     <div class="board-wrap">
       <div class="board" id="board"></div>
     </div>
-
-    <!-- 로그 패널 -->
     <div class="panel log-panel">
       <div class="panel-title">📋 로그</div>
       <div class="log-list" id="log-list"></div>
     </div>
-
-    <!-- 채팅 패널 -->
     <div class="panel chat-panel">
       <div class="panel-title">💬 채팅</div>
       <div class="chat-msg-list" id="chat-msg-list"></div>
@@ -975,8 +959,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
         </div>
       </div>
     </div>
-
-    <!-- 주사위 섹션 -->
     <div class="dice-section" id="dice-section">
       <div class="dice-row" id="dice-row">
         <div class="die" id="d1" style="width:var(--die);height:var(--die);font-size:26px;">-</div>
@@ -984,9 +966,21 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
         <div class="die" id="d3" style="width:var(--die);height:var(--die);font-size:26px;">-</div>
         <div class="die" id="d4" style="width:var(--die);height:var(--die);font-size:26px;">-</div>
       </div>
+      <!-- 턴 타이머 -->
+      <div class="timer-wrap" id="timer-wrap">
+        <div class="timer-ring">
+          <svg width="44" height="44" viewBox="0 0 44 44">
+            <circle class="timer-ring-bg" cx="22" cy="22" r="18"/>
+            <circle class="timer-ring-fill" id="timer-ring-fill" cx="22" cy="22" r="18"/>
+          </svg>
+          <div class="timer-text" id="timer-text">90</div>
+        </div>
+        <div class="timer-label">SEC</div>
+      </div>
       <div class="dice-info">
         <div class="dice-msg" id="dice-msg">주사위를 굴리세요</div>
         <div class="dice-hint" id="dice-hint"></div>
+        <div class="dice-pairs-hint" id="dice-pairs-hint"></div>
       </div>
       <div class="action-btns">
         <button class="btn-stop" id="btn-stop" onclick="stopTurn()" disabled>멈추기</button>
@@ -1000,7 +994,6 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   </div>
 </div>
 
-<!-- 승자 오버레이 -->
 <div id="winner-overlay">
   <div class="winner-card">
     <span class="winner-crown">👑</span>
@@ -1040,16 +1033,15 @@ const P_COLORS    = ['--p1','--p2','--p3','--p4'];
 const P_ICONS     = ['🔴','🔵','🟢','🟠'];
 const WIN_COLS    = 3;
 const MAX_RUNNERS = 3;
+const TURN_LIMIT  = 90; // 초
 
-// 크리스탈 말 색상 매핑
 const CRYSTAL_COLORS = [
-  { base:'#ff5577', mid:'#ff88aa', light:'#ffbbcc', shadow:'#aa1144' }, // 레드
-  { base:'#44ccff', mid:'#88ddff', light:'#ccf0ff', shadow:'#0077bb' }, // 블루
-  { base:'#44ee88', mid:'#88ffaa', light:'#ccffe0', shadow:'#00aa44' }, // 그린
-  { base:'#ffaa33', mid:'#ffcc77', light:'#ffe8bb', shadow:'#cc6600' }, // 오렌지
+  { base:'#ff5577', mid:'#ff88aa', light:'#ffbbcc', shadow:'#aa1144' },
+  { base:'#44ccff', mid:'#88ddff', light:'#ccf0ff', shadow:'#0077bb' },
+  { base:'#44ee88', mid:'#88ffaa', light:'#ccffe0', shadow:'#00aa44' },
+  { base:'#ffaa33', mid:'#ffcc77', light:'#ffe8bb', shadow:'#cc6600' },
 ];
 
-// ── 이모티 (커스텀) ──
 const EMOTIS = [
   { label:'🎲', text:'🎲' },
   { label:'🏔', text:'🏔' },
@@ -1069,43 +1061,58 @@ const EMOTIS = [
   { label:'🐢', text:'🐢 느리다~' },
 ];
 
-// ── 이모티 버튼 — 말풍선으로 표시 ──
+// ── 이모티 버튼 ──
 const emotiRow = document.getElementById('emoti-row');
-const activeBubbles = {}; // 👈 말풍선 상태(텍스트) 저장용 객체
 
-function showSpeechBubble(pid, text){
-  if(activeBubbles[pid]) clearTimeout(activeBubbles[pid].timeout);
-  
-  // 상태 저장 (화면이 새로 그려질 때 복구하기 위함)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  말풍선 시스템 — 완전히 새로 작성
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const activeBubbles = {};  // { pid: { text, timeout } }
+
+function showSpeechBubble(pid, text) {
+  // 이전 타이머 클리어
+  if (activeBubbles[pid]) {
+    clearTimeout(activeBubbles[pid].timeout);
+    delete activeBubbles[pid];
+  }
+
+  // 상태 저장 (renderPlayers 재렌더 시 복원용)
   activeBubbles[pid] = {
-    text: text,
-    timeout: setTimeout(()=>{
+    text,
+    timeout: setTimeout(() => {
       delete activeBubbles[pid];
-      const card = document.querySelector(`.player-card[data-pid="${pid}"]`);
-      if(card){
-        const old = card.querySelector('.speech-bubble');
-        if(old) old.remove();
-      }
+      _removeBubble(pid);
     }, 3500)
   };
-  
-  // DOM에 띄우기
+
+  _spawnBubble(pid, text);
+}
+
+function _spawnBubble(pid, text) {
   const card = document.querySelector(`.player-card[data-pid="${pid}"]`);
-  if(!card) return;
-  
-  const old = card.querySelector('.speech-bubble');
-  if(old) old.remove();
-  
+  if (!card) return;
+
+  // 기존 말풍선 제거
+  _removeBubble(pid);
+
   const bubble = document.createElement('div');
-  bubble.className = 'speech-bubble'; // 👈 처음엔 숨긴 상태로 생성
+  bubble.className = 'speech-bubble';
+  bubble.dataset.bubblePid = pid;
   bubble.textContent = text;
   card.appendChild(bubble);
 
-  // 🎈 화면에 붙인 직후에 show 클래스를 넣어야 부드럽게 튀어나옵니다!
+  // 두 프레임 후 show — CSS transition을 태우기 위해 반드시 이렇게 해야 함
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       bubble.classList.add('show');
     });
+  });
+}
+
+function _removeBubble(pid) {
+  document.querySelectorAll(`.speech-bubble[data-bubble-pid="${pid}"]`).forEach(el => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 250);
   });
 }
 
@@ -1115,12 +1122,8 @@ EMOTIS.forEach(e => {
   btn.textContent = e.label;
   btn.title = e.text;
   btn.onclick = async () => {
-    // 관전자이거나 플레이어 목록에 없으면 튕겨냄
-    if (isSpectator || !localGame || !localGame.players[myId]) {
-      toast('관전자는 이모티콘을 띄울 카드가 없습니다.');
-      return;
-    }
-    await push(ref(db,'rooms/'+roomCode+'/emotis'),{
+    if (isSpectator) { toast('관전자는 이모티콘을 띄울 수 없습니다.'); return; }
+    await push(ref(db, 'rooms/' + roomCode + '/emotis'), {
       pid: myId, text: e.text, ts: Date.now()
     });
   };
@@ -1157,6 +1160,66 @@ let isProcessingClick=false;
 let isSpectator=false;
 let bgmPlaying=false;
 
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  턴 타이머
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let timerInterval = null;
+let timerSeconds = TURN_LIMIT;
+const CIRC = 2 * Math.PI * 18; // r=18
+
+function startTimer(onExpire) {
+  clearInterval(timerInterval);
+  timerSeconds = TURN_LIMIT;
+  _updateTimerUI(timerSeconds);
+
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    _updateTimerUI(timerSeconds);
+    if (timerSeconds <= 0) {
+      clearInterval(timerInterval);
+      onExpire();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  _updateTimerUI(TURN_LIMIT); // 리셋
+}
+
+function _updateTimerUI(sec) {
+  const fill = document.getElementById('timer-ring-fill');
+  const text = document.getElementById('timer-text');
+  if (!fill || !text) return;
+  const ratio = Math.max(0, sec / TURN_LIMIT);
+  fill.style.strokeDashoffset = CIRC * (1 - ratio);
+  text.textContent = Math.max(0, sec);
+  const urgent = sec <= 15;
+  fill.classList.toggle('urgent', urgent);
+  text.classList.toggle('urgent', urgent);
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  탭 제목 깜빡임
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let titleBlinkInterval = null;
+const ORIGINAL_TITLE = "Can't Stop Ver.026";
+
+function startTitleBlink() {
+  if (titleBlinkInterval) return;
+  let on = true;
+  titleBlinkInterval = setInterval(() => {
+    document.title = on ? '🎯 내 차례!' : ORIGINAL_TITLE;
+    on = !on;
+  }, 800);
+}
+function stopTitleBlink() {
+  clearInterval(titleBlinkInterval);
+  titleBlinkInterval = null;
+  document.title = ORIGINAL_TITLE;
+}
+
 // ── BGM 제어 ──
 function toggleBGM(){
   const audio=document.getElementById('bgm-audio');
@@ -1176,7 +1239,7 @@ function toggleBGM(){
 window.toggleBGM=toggleBGM;
 
 // ═══════════════════════════════
-//  Web Audio — 고품질 효과음
+//  Web Audio 효과음
 // ═══════════════════════════════
 let audioCtx=null;
 function getAudio(){
@@ -1184,7 +1247,6 @@ function getAudio(){
   if(audioCtx.state==='suspended') audioCtx.resume();
   return audioCtx;
 }
-
 function osc(ctx,freq,type,vol,start,dur){
   const o=ctx.createOscillator();
   const g=ctx.createGain();
@@ -1197,7 +1259,6 @@ function osc(ctx,freq,type,vol,start,dur){
   o.stop(ctx.currentTime+start+dur+0.05);
   return {o,g};
 }
-
 function noiseBurst(ctx,vol,start,dur,freq=800){
   try{
     const buf=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*dur),ctx.sampleRate);
@@ -1205,7 +1266,6 @@ function noiseBurst(ctx,vol,start,dur,freq=800){
     for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1);
     const src=ctx.createBufferSource();
     src.buffer=buf;
-    // 필터로 '달그락' 나무 느낌
     const filt=ctx.createBiquadFilter();
     filt.type='bandpass';filt.frequency.value=freq;filt.Q.value=0.5;
     const g=ctx.createGain();
@@ -1215,50 +1275,36 @@ function noiseBurst(ctx,vol,start,dur,freq=800){
     src.start(ctx.currentTime+start);
   }catch(e){}
 }
-
-// 🎲 주사위 굴리기 — 나무 주사위 달그락달그락
 function sfxRoll(){
   try{
     const c=getAudio();
-    // 달그락 소리 4번 (나무 소재감)
-    const hits=[0, 0.07, 0.16, 0.27, 0.4];
-    hits.forEach((t,i)=>{
-      const pitch=600+Math.random()*400; // 랜덤 나무음
-      noiseBurst(c, 0.12+Math.random()*0.08, t, 0.06, pitch);
-      // 나무 '톡' 소리
-      osc(c, 120+Math.random()*60, 'square', 0.08, t, 0.05);
+    const hits=[0,0.07,0.16,0.27,0.4];
+    hits.forEach((t)=>{
+      const pitch=600+Math.random()*400;
+      noiseBurst(c,0.12+Math.random()*0.08,t,0.06,pitch);
+      osc(c,120+Math.random()*60,'square',0.08,t,0.05);
     });
-    // 마지막 '탁' 착지
-    noiseBurst(c, 0.2, 0.5, 0.12, 500);
-    osc(c, 100, 'square', 0.12, 0.5, 0.1);
+    noiseBurst(c,0.2,0.5,0.12,500);
+    osc(c,100,'square',0.12,0.5,0.1);
   }catch(e){}
 }
-
-// 🏔 열 선택 — 크리스탈 울림
 function sfxSelect(){
   try{
     const c=getAudio();
-    // 크리스탈 맑은 소리
-    osc(c, 880, 'sine', 0.2, 0, 0.15);
-    osc(c, 1320, 'sine', 0.12, 0.03, 0.12);
-    osc(c, 1760, 'sine', 0.07, 0.06, 0.1);
-    // 잔향
-    osc(c, 880, 'sine', 0.05, 0.15, 0.4);
+    osc(c,880,'sine',0.2,0,0.15);
+    osc(c,1320,'sine',0.12,0.03,0.12);
+    osc(c,1760,'sine',0.07,0.06,0.1);
+    osc(c,880,'sine',0.05,0.15,0.4);
   }catch(e){}
 }
-
-// 💥 버스트 — 눈사태! 와장창
 function sfxBust(){
   try{
     const c=getAudio();
-    // 낮은 쿵 (눈사태 시작)
-    osc(c, 80, 'sawtooth', 0.35, 0, 0.08);
-    osc(c, 60, 'sawtooth', 0.28, 0.05, 0.15);
-    // 쏴아~ 노이즈
-    noiseBurst(c, 0.25, 0, 0.4, 300);
-    noiseBurst(c, 0.2, 0.1, 0.35, 150);
-    noiseBurst(c, 0.15, 0.2, 0.5, 80);
-    // 피치다운
+    osc(c,80,'sawtooth',0.35,0,0.08);
+    osc(c,60,'sawtooth',0.28,0.05,0.15);
+    noiseBurst(c,0.25,0,0.4,300);
+    noiseBurst(c,0.2,0.1,0.35,150);
+    noiseBurst(c,0.15,0.2,0.5,80);
     const o=c.createOscillator();const g=c.createGain();
     o.connect(g);g.connect(c.destination);
     o.type='sawtooth';
@@ -1269,8 +1315,6 @@ function sfxBust(){
     o.start(c.currentTime);o.stop(c.currentTime+0.75);
   }catch(e){}
 }
-
-// 🏆 열 정복 — 산 정상에서 에코 울림
 function sfxCapture(){
   try{
     const c=getAudio();
@@ -1279,15 +1323,11 @@ function sfxCapture(){
     melody.forEach((f,i)=>{
       osc(c,f,'sine',0.22,delays[i],0.25);
       osc(c,f*0.5,'sine',0.1,delays[i],0.3);
-      // 에코
       osc(c,f,'sine',0.08,delays[i]+0.18,0.35);
     });
-    // 크리스탈 반짝임
     [2093,2637,3136].forEach((f,i)=>osc(c,f,'sine',0.07,0.4+i*0.06,0.15));
   }catch(e){}
 }
-
-// 🎉 승리 — 웅장한 팡파레 + 에코
 function sfxWin(){
   try{
     const c=getAudio();
@@ -1298,17 +1338,13 @@ function sfxWin(){
       osc(c,f,'sine',0.25,t,dur[i]);
       osc(c,f*0.5,'sine',0.12,t,dur[i]);
       osc(c,f*2,'sine',0.06,t,dur[i]*0.7);
-      // 에코
       osc(c,f,'sine',0.08,t+0.2,dur[i]+0.2);
       t+=dur[i]+0.04;
     });
-    // 마지막 화음
     [523,659,784,1047,1319].forEach(f=>osc(c,f,'sine',0.15,t,1.2));
     noiseBurst(c,0.06,0,0.3,2000);
   }catch(e){}
 }
-
-// 💬 채팅 — 눈 결정 소리
 function sfxChat(){
   try{
     const c=getAudio();
@@ -1317,18 +1353,14 @@ function sfxChat(){
     osc(c,1568,'sine',0.04,0.1,0.06);
   }catch(e){}
 }
-
-// 🔔 내 턴 알림음 — 경쾌한 크리스탈 차임벨 (이 부분을 추가!)
 function sfxMyTurn(){
   try{
     const c=getAudio();
-    osc(c, 1047, 'sine', 0.12, 0, 0.15);
-    osc(c, 1319, 'sine', 0.12, 0.08, 0.2);
-    osc(c, 1760, 'sine', 0.1, 0.16, 0.35);
+    osc(c,1047,'sine',0.12,0,0.15);
+    osc(c,1319,'sine',0.12,0.08,0.2);
+    osc(c,1760,'sine',0.1,0.16,0.35);
   }catch(e){}
 }
-
-// ✋ 멈추기 — 안정된 쿵
 function sfxStop(){
   try{
     const c=getAudio();
@@ -1338,11 +1370,18 @@ function sfxStop(){
     noiseBurst(c,0.08,0,0.1,400);
   }catch(e){}
 }
+// 타이머 긴박음
+function sfxTimerUrgent(){
+  try{
+    const c=getAudio();
+    osc(c,440,'sine',0.06,0,0.05);
+  }catch(e){}
+}
 
 // ═══════════════════════════════
-//  크리스탈 말 SVG 생성
+//  크리스탈 말 SVG
 // ═══════════════════════════════
-function makePegSVG(colorIndex, sizeClass) {
+function makePegSVG(colorIndex) {
   const c = CRYSTAL_COLORS[colorIndex] || CRYSTAL_COLORS[0];
   const id = `cr_${colorIndex}_${Math.random().toString(36).slice(2,6)}`;
   return `<svg viewBox="0 0 40 44" xmlns="http://www.w3.org/2000/svg">
@@ -1358,22 +1397,15 @@ function makePegSVG(colorIndex, sizeClass) {
       </linearGradient>
       <filter id="${id}bl"><feGaussianBlur stdDeviation="0.8"/></filter>
     </defs>
-    <!-- 몸체: 8면체 크리스탈 -->
     <polygon points="20,2 34,12 38,26 28,40 12,40 2,26 6,12"
-      fill="url(#${id}g1)"
-      stroke="${c.shadow}" stroke-width="0.8" stroke-opacity="0.6"/>
-    <!-- 면 분할선 -->
+      fill="url(#${id}g1)" stroke="${c.shadow}" stroke-width="0.8" stroke-opacity="0.6"/>
     <line x1="20" y1="2" x2="38" y2="26" stroke="${c.shadow}" stroke-width="0.5" stroke-opacity="0.3"/>
     <line x1="20" y1="2" x2="2" y2="26" stroke="${c.shadow}" stroke-width="0.5" stroke-opacity="0.3"/>
     <line x1="20" y1="2" x2="20" y2="40" stroke="${c.shadow}" stroke-width="0.4" stroke-opacity="0.2"/>
     <line x1="2" y1="26" x2="38" y2="26" stroke="${c.shadow}" stroke-width="0.4" stroke-opacity="0.25"/>
-    <!-- 하이라이트 -->
     <polygon points="20,2 30,10 24,20 14,20 10,10"
-      fill="url(#${id}g2)" opacity="0.7"
-      filter="url(#${id}bl)"/>
-    <!-- 상단 빛반사 -->
+      fill="url(#${id}g2)" opacity="0.7" filter="url(#${id}bl)"/>
     <ellipse cx="16" cy="9" rx="4" ry="2.5" fill="rgba(255,255,255,0.55)" transform="rotate(-20,16,9)"/>
-    <!-- 하단 그림자 -->
     <ellipse cx="20" cy="40" rx="10" ry="2.5" fill="${c.shadow}" opacity="0.25" filter="url(#${id}bl)"/>
   </svg>`;
 }
@@ -1383,7 +1415,6 @@ function makePegSVG(colorIndex, sizeClass) {
 // ═══════════════════════════════
 function computeSizes(){
   const W=window.innerWidth,H=window.innerHeight;
-  // 4컬럼: 185+190+195+gap4*8 + 보드
   const boardW=W-185-190-195-8*3-24*2-16;
   const boardH=H-44-142-8*2-12*2-32;
   const byH=Math.floor(boardH/13.5);
@@ -1420,55 +1451,36 @@ selectCount(4);
 const genCode=()=>{const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)];return s;};
 const genId  =()=>Math.random().toString(36).slice(2,10);
 
-// 🛠️ 방 진입 성공 후 공통 마무리 함수 (관전자 모드 지원)
 function enterLobby(code, id, name, spectator = false) {
-  // 1. 세션 정보 저장 (관전자 여부 포함)
-  localStorage.setItem('cantstop_session', JSON.stringify({ 
-    roomCode: code, myId: id, myName: name, isSpectator: spectator 
+  localStorage.setItem('cantstop_session', JSON.stringify({
+    roomCode: code, myId: id, myName: name, isSpectator: spectator
   }));
-  
-  // 2. 화면에 방 코드 텍스트 세팅
   document.getElementById('display-code').textContent = code;
   document.getElementById('game-room-code').textContent = code;
-  
-  // 3. 서버 감시 시작
   listenRoom();
-
-  // 4. 관전자가 아닐 때만 대기실 화면으로 이동
-  if (!spectator) {
-    switchTab('waiting');
-  }
+  if (!spectator) { switchTab('waiting'); }
 }
-
-// ─── 기존 3개의 함수를 아래 코드로 교체 ───
 
 async function createRoom(){
   myName=document.getElementById('create-name').value.trim();
   if(!myName){toast('닉네임을 입력하세요');return;}
-
-  // 🧹 [쓰레기 줍기 로직] 24시간 지난 방 청소
   try {
-    const snap = await get(ref(db, 'rooms'));
-    if (snap.exists()) {
-      const rooms = snap.val();
-      const now = Date.now();
-      const updates = {};
-      for (const [c, r] of Object.entries(rooms)) {
-        if (!r.createdAt || now - r.createdAt > 86400000) updates[c] = null;
+    const snap=await get(ref(db,'rooms'));
+    if(snap.exists()){
+      const rooms=snap.val();const now=Date.now();const updates={};
+      for(const [c,r] of Object.entries(rooms)){
+        if(!r.createdAt||now-r.createdAt>86400000) updates[c]=null;
       }
-      if (Object.keys(updates).length > 0) await update(ref(db, 'rooms'), updates);
+      if(Object.keys(updates).length>0) await update(ref(db,'rooms'),updates);
     }
-  } catch (e) {}
-
+  }catch(e){}
   roomCode=genCode();myId=genId();
   await set(ref(db,'rooms/'+roomCode),{
-    status:'waiting', maxPlayers:selectedCount, host:myId,
-    createdAt: Date.now(), // 방 생성 시간 기록
+    status:'waiting',maxPlayers:selectedCount,host:myId,
+    createdAt:Date.now(),
     players:{[myId]:{name:myName,colorIndex:0}}
   });
-  
-  // 중복 코드 대신 공통 함수 한 줄로 호출!
-  enterLobby(roomCode, myId, myName);
+  enterLobby(roomCode,myId,myName);
 }
 window.createRoom=createRoom;
 
@@ -1483,12 +1495,9 @@ async function joinRoom(){
   if(room.status!=='waiting'){toast('이미 시작된 방입니다');return;}
   const plist=Object.keys(room.players||{});
   if(plist.length>=room.maxPlayers){toast('방이 꽉 찼습니다');return;}
-  
   myId=genId();roomCode=code;
   await update(ref(db,'rooms/'+code+'/players/'+myId),{name:myName,colorIndex:plist.length});
-  
-  // 중복 코드 대신 공통 함수 한 줄로 호출!
-  enterLobby(roomCode, myId, myName);
+  enterLobby(roomCode,myId,myName);
 }
 window.joinRoom=joinRoom;
 
@@ -1498,21 +1507,15 @@ async function joinSpectate(){
   if(code.length!==4){toast('방 코드는 4자리입니다');return;}
   const snap=await get(ref(db,'rooms/'+code));
   if(!snap.exists()){toast('방을 찾을 수 없습니다');return;}
-  
   myId=genId();roomCode=code;isSpectator=true;
-  
-  // 중복 코드 대신 공통 함수 한 줄로 호출! (관전자이므로 true 전달)
-  enterLobby(roomCode, myId, myName, true);
+  enterLobby(roomCode,myId,myName,true);
 }
-window.joinSpectate=joinSpectate;
 window.joinSpectate=joinSpectate;
 
 function listenRoom(){
   onValue(ref(db,'rooms/'+roomCode),snap=>{
     if(!snap.exists()) return;
     const room=snap.val();
-
-    // 관전자는 강퇴 감지 없음
     if(!isSpectator){
       if(room.status==='playing'&&room.game&&room.game.players&&!room.game.players[myId]){
         alert('방장에 의해 강퇴되었습니다.');
@@ -1523,36 +1526,25 @@ function listenRoom(){
         localStorage.removeItem('cantstop_session');location.reload();return;
       }
     }
-
     if(room.status==='playing'){
       document.getElementById('lobby').style.display='none';
       document.getElementById('game').style.display='block';
-      // 관전자 배너
-      document.getElementById('spectator-banner').classList.toggle('show', isSpectator);
+      document.getElementById('spectator-banner').classList.toggle('show',isSpectator);
       computeSizes();
       renderGame(room);
       if(!chatListening){chatListening=true;listenChat();listenEmotis();}
       return;
     }
-
     if(room.status==='waiting'){
       document.getElementById('winner-overlay').classList.remove('show');
       document.getElementById('game').style.display='none';
       document.getElementById('lobby').style.display='flex';
       document.getElementById('spectator-banner').classList.remove('show');
-      chatListening=false;
-
-      // 관전자는 대기화면 없이 그냥 대기
-      if(isSpectator){
-        switchTab('spectate');
-        toast('게임 시작을 기다리는 중...');
-        return;
-      }
+      chatListening=false;stopTimer();stopTitleBlink();
+      if(isSpectator){switchTab('spectate');toast('게임 시작을 기다리는 중...');return;}
       switchTab('waiting');
     }
-
     if(isSpectator) return;
-
     const players=Object.values(room.players||{});
     const isHost=room.host===myId;
     const wp=document.getElementById('waiting-players');
@@ -1562,8 +1554,7 @@ function listenRoom(){
       const slot=document.createElement('div');slot.className='player-slot'+(p?'':' empty');
       const dot=document.createElement('div');dot.className='player-dot';
       if(p) dot.style.background=`var(${P_COLORS[i]})`;
-      const nm=document.createElement('span');
-      nm.style.fontSize='13px';
+      const nm=document.createElement('span');nm.style.fontSize='13px';
       nm.textContent=p?`${P_ICONS[i]} ${p.name}`:'대기 중...';
       if(!p) nm.style.color='var(--muted)';
       slot.appendChild(dot);slot.appendChild(nm);wp.appendChild(slot);
@@ -1588,28 +1579,17 @@ async function startGame(){
 window.startGame=startGame;
 
 async function rematch(){
-  // 🚫 방장 권한 체크: 방장만 새 게임을 시작할 수 있음
-  if (!localGame || localGame.host !== myId) {
-    toast('방장만 재등정을 시작할 수 있습니다.');
-    return;
-  }
-
-  const snap = await get(ref(db,'rooms/'+roomCode));
+  if(!localGame||localGame.host!==myId){toast('방장만 재등정을 시작할 수 있습니다.');return;}
+  const snap=await get(ref(db,'rooms/'+roomCode));
   if(!snap.exists()) return;
-  const room = snap.val();
-  const players = Object.entries(room.players).map(([id,p])=>({id,...p}));
-  
-  // 턴 순서 섞기 (이전 1턴이 맨 마지막으로 가도록)
-  const rotated = [...players.slice(1), ...players.slice(0,1)];
-  
-  // 새 게임 데이터 덮어쓰기 (채팅 내역은 유지)
-  await update(ref(db,'rooms/'+roomCode), {
-    status: 'playing',
-    game: buildGame(rotated, room.host),
-    chat: room.chat || {} // 👈 기존에는 빈 괄호 {} 였으나 이전 채팅을 남기도록 변경
+  const room=snap.val();
+  const players=Object.entries(room.players).map(([id,p])=>({id,...p}));
+  const rotated=[...players.slice(1),...players.slice(0,1)];
+  await update(ref(db,'rooms/'+roomCode),{
+    status:'playing',game:buildGame(rotated,room.host),chat:room.chat||{}
   });
 }
-window.rematch = rematch;
+window.rematch=rematch;
 
 function buildGame(players,host){
   const columns={};
@@ -1619,7 +1599,8 @@ function buildGame(players,host){
     players:players.reduce((a,p)=>{a[p.id]={name:p.name,colorIndex:p.colorIndex,capturedCols:[]};return a;},{}),
     playerOrder:players.map(p=>p.id),
     currentTurnIndex:0,phase:'roll',dice:[0,0,0,0],
-    runners:{},clickableColumns:[],selectedThisRoll:[],log:[],winner:null,columns
+    runners:{},clickableColumns:[],selectedThisRoll:[],log:[],winner:null,columns,
+    turnStartedAt: Date.now()
   };
 }
 
@@ -1630,7 +1611,6 @@ function getPairs(dice){
   const [a,b,c,d]=dice;
   return [{x:a+b,y:c+d},{x:a+c,y:b+d},{x:a+d,y:b+c}];
 }
-
 function canAdvance(col,runners,columns,pid){
   if(col<2||col>12) return false;
   const cd=columns[col]||{positions:{},captured:null};
@@ -1641,7 +1621,6 @@ function canAdvance(col,runners,columns,pid){
   if(Object.keys(runners).length>=MAX_RUNNERS) return false;
   return true;
 }
-
 function computeClickable(dice,runners,columns,pid,selectedThisRoll){
   const sel=(selectedThisRoll||[]).map(Number);
   if(sel.length>=2) return [];
@@ -1666,7 +1645,6 @@ function computeClickable(dice,runners,columns,pid,selectedThisRoll){
   });
   return [...available.entries()].map(([col,adv])=>({col,adv}));
 }
-
 function isBustRoll(dice,runners,columns,pid){
   return getPairs(dice).every(({x,y})=>
     !canAdvance(x,runners,columns,pid)&&!canAdvance(y,runners,columns,pid)
@@ -1680,32 +1658,26 @@ async function rollDice(){
   if(!localGame) return;
   const g=localGame;
   if(g.playerOrder[g.currentTurnIndex]!==myId) return;
+  stopTimer();
   sfxRoll();
-
   const dice=Array.from({length:4},()=>Math.floor(Math.random()*6)+1);
   document.getElementById('btn-roll').disabled=true;
   document.getElementById('btn-stop').disabled=true;
-
   ['d1','d2','d3','d4'].forEach((id,i)=>{
     const el=document.getElementById(id);
     el.classList.add('rolling');
-    setTimeout(()=>{
-      el.classList.remove('rolling');
-      el.textContent=dice[i];
-    },500);
+    setTimeout(()=>{el.classList.remove('rolling');el.textContent=dice[i];},500);
   });
-
   const runners=g.runners||{};
   const bust=isBustRoll(dice,runners,g.columns||{},myId);
   const clickable=bust?[]:computeClickable(dice,runners,g.columns||{},myId,[]);
   const logEntry=`<b>${escHtml(g.players[myId].name)}</b> 🎲 [${dice.join(',')}]${bust?' — <b class="bust-text">💥 버스트!</b>':''}`;
-
   setTimeout(async()=>{
     if(bust){
       await update(ref(db,'rooms/'+roomCode+'/game'),{dice,phase:'bust',clickableColumns:[],selectedThisRoll:[],log:[...(g.log||[]),logEntry]});
       setTimeout(()=>bustTurn(),1800);
     } else {
-      await update(ref(db,'rooms/'+roomCode+'/game'),{dice,phase:'choose',clickableColumns:clickable,selectedThisRoll:[],log:[...(g.log||[]),logEntry]});
+      await update(ref(db,'rooms/'+roomCode+'/game'),{dice,phase:'choose',clickableColumns:clickable,selectedThisRoll:[],log:[...(g.log||[]),logEntry],turnStartedAt:Date.now()});
     }
   },520);
 }
@@ -1720,6 +1692,7 @@ async function clickColumn(col,adv){
   if(g.phase!=='choose') return;
   isProcessingClick=true;
   try{
+    stopTimer();
     const currentRunners=g.runners||{};
     const runnerKeys=Object.keys(currentRunners).map(Number);
     const isExistingPath=runnerKeys.includes(col);
@@ -1739,7 +1712,8 @@ async function clickColumn(col,adv){
       runners:newRunners,selectedThisRoll:isDone?[]:selected,
       clickableColumns:isDone?[]:nextClickable,
       phase:isDone?'roll':'choose',
-      log:[...(g.log||[]),logEntry]
+      log:[...(g.log||[]),logEntry],
+      turnStartedAt:Date.now()
     });
   } finally {
     isProcessingClick=false;
@@ -1751,6 +1725,7 @@ async function stopTurn(){
   if(!localGame) return;
   const g=localGame;
   if(g.playerOrder[g.currentTurnIndex]!==myId) return;
+  stopTimer();stopTitleBlink();
   sfxStop();
   const runners=g.runners||{};
   const columns=JSON.parse(JSON.stringify(g.columns||{}));
@@ -1778,7 +1753,7 @@ async function stopTurn(){
   await update(ref(db,'rooms/'+roomCode+'/game'),{
     columns,players,runners:{},clickableColumns:[],selectedThisRoll:[],
     phase:'roll',dice:[0,0,0,0],currentTurnIndex:nextIndex,winner,
-    log:[...(g.log||[]),logEntry]
+    log:[...(g.log||[]),logEntry],turnStartedAt:Date.now()
   });
 }
 window.stopTurn=stopTurn;
@@ -1787,13 +1762,41 @@ async function bustTurn(){
   if(!localGame) return;
   const g=localGame;
   if(g.playerOrder[g.currentTurnIndex]!==myId) return;
+  stopTimer();stopTitleBlink();
   const nextIndex=(g.currentTurnIndex+1)%g.playerOrder.length;
   const logEntry=`<b>${escHtml(g.players[myId].name)}</b> 💥 버스트 — 진행 취소`;
   await update(ref(db,'rooms/'+roomCode+'/game'),{
     runners:{},clickableColumns:[],selectedThisRoll:[],
     phase:'roll',dice:[0,0,0,0],currentTurnIndex:nextIndex,
-    log:[...(g.log||[]),logEntry]
+    log:[...(g.log||[]),logEntry],turnStartedAt:Date.now()
   });
+}
+
+// 타이머 만료 시 자동 처리
+async function onTimerExpire() {
+  if (!localGame) return;
+  const g = localGame;
+  if (g.playerOrder[g.currentTurnIndex] !== myId) return;
+  if (g.winner) return;
+
+  if (g.phase === 'roll') {
+    // 굴리기 대기 중 → 러너 있으면 자동 멈춤, 없으면 자동 굴리기
+    if (Object.keys(g.runners||{}).length > 0) {
+      toast('⏱ 시간 초과 — 자동으로 멈춥니다');
+      await stopTurn();
+    } else {
+      toast('⏱ 시간 초과 — 자동으로 굴립니다');
+      await rollDice();
+    }
+  } else if (g.phase === 'choose') {
+    // 선택 대기 중 → 첫 번째 클릭 가능한 열 자동 선택
+    const clickable = g.clickableColumns || [];
+    if (clickable.length > 0) {
+      const first = typeof clickable[0] === 'object' ? clickable[0] : {col:clickable[0],adv:1};
+      toast('⏱ 시간 초과 — 자동으로 선택합니다');
+      await clickColumn(first.col, first.adv);
+    }
+  }
 }
 
 async function forceSkipTurn(){
@@ -1806,7 +1809,7 @@ async function forceSkipTurn(){
   const logEntry=`⚠ 방장이 <b>${escHtml(curName)}</b>의 턴을 강제로 넘겼습니다`;
   await update(ref(db,'rooms/'+roomCode+'/game'),{
     runners:{},clickableColumns:[],selectedThisRoll:[],phase:'roll',dice:[0,0,0,0],
-    currentTurnIndex:nextIndex,log:[...(g.log||[]),logEntry]
+    currentTurnIndex:nextIndex,log:[...(g.log||[]),logEntry],turnStartedAt:Date.now()
   });
   toast('턴이 강제로 넘어갔습니다');
 }
@@ -1851,19 +1854,13 @@ async function sendChat(){
   const msg=input.value.trim();
   if(!msg) return;
   input.value='';
-  
-  let pName = myName;
-  let pColor = -1; // 관전자 고유 식별 번호
-
-  // 방에 참가한 정상 플레이어인지 확인
-  if (!isSpectator && localGame && localGame.players[myId]) {
-    pName = localGame.players[myId].name;
-    pColor = localGame.players[myId].colorIndex;
+  let pName=myName, pColor=-1;
+  if(!isSpectator&&localGame&&localGame.players[myId]){
+    pName=localGame.players[myId].name;pColor=localGame.players[myId].colorIndex;
   } else {
-    pName = "[관전] " + myName; // 관전자는 꼬리표 추가
+    pName='[관전] '+myName;
   }
-  
-  await push(ref(db,'rooms/'+roomCode+'/chat'),{name: pName, colorIndex: pColor, msg, ts:Date.now()});
+  await push(ref(db,'rooms/'+roomCode+'/chat'),{name:pName,colorIndex:pColor,msg,ts:Date.now()});
 }
 window.sendChat=sendChat;
 
@@ -1872,37 +1869,46 @@ function listenChat(){
     if(!snap.exists()) return;
     const msgs=Object.values(snap.val());
     const list=document.getElementById('chat-msg-list');
+    const wasBottom=list.scrollHeight-list.scrollTop-list.clientHeight<20;
     list.innerHTML='';
     msgs.slice(-30).forEach(m=>{
       const item=document.createElement('div');item.className='chat-msg';
-      
-      // 관전자(-1)와 참가자 색상/아이콘 멋지게 구분
-      const isSpec = m.colorIndex === -1;
-      const colorVar = isSpec ? '#d4b866' : `var(${P_COLORS[m.colorIndex]})`;
-      const icon = isSpec ? '👁' : P_ICONS[m.colorIndex];
-      
+      const isSpec=m.colorIndex===-1;
+      const colorVar=isSpec?'#d4b866':`var(${P_COLORS[m.colorIndex]})`;
+      const icon=isSpec?'👁':P_ICONS[m.colorIndex];
       item.innerHTML=`<span class="sender" style="color:${colorVar};">${icon} ${escHtml(m.name)}</span><br><span class="msg-text">${escHtml(m.msg)}</span>`;
       list.appendChild(item);
     });
-    list.scrollTop=list.scrollHeight;
+    if(wasBottom) list.scrollTop=list.scrollHeight;
+    sfxChat();
   });
 }
 
-// ── 이모티콘 수신 리스너 ──
-let lastEmotiTs = Date.now(); // 처음 접속 시 과거 이모티콘은 무시하기 위한 기준 시간
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  이모티콘 수신 리스너 — 완전히 재작성
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let emotiListenerAttached = false;
+// 접속 시점 기준 타임스탬프 (이전 이모티 무시)
+const JOIN_TIME = Date.now();
+// 이미 처리한 이모티 key 집합
+const seenEmotiKeys = new Set();
 
 function listenEmotis() {
+  if (emotiListenerAttached) return;
+  emotiListenerAttached = true;
+
   onValue(ref(db, 'rooms/' + roomCode + '/emotis'), snap => {
     if (!snap.exists()) return;
-    const emotis = Object.values(snap.val());
-    
-    emotis.forEach(e => {
-      // 내가 접속한 이후에 생성된 새로운 이모티콘만 화면에 띄움
-      if (e.ts > lastEmotiTs) {
-        showSpeechBubble(e.pid, e.text);
-        lastEmotiTs = Math.max(lastEmotiTs, e.ts);
-    sfxChat();
-      }
+    const data = snap.val();  // { key: { pid, text, ts }, ... }
+
+    Object.entries(data).forEach(([key, e]) => {
+      // 이미 처리했거나, 내가 접속하기 전 것이면 무시
+      if (seenEmotiKeys.has(key)) return;
+      if (e.ts < JOIN_TIME - 500) { seenEmotiKeys.add(key); return; }
+
+      seenEmotiKeys.add(key);
+      showSpeechBubble(e.pid, e.text);
+      sfxChat();
     });
   });
 }
@@ -1911,14 +1917,11 @@ function listenEmotis() {
 //  렌더링
 // ═══════════════════════════════
 function renderGame(room){
-  const g = room.game; 
+  const g=room.game;
   if(!g) return;
-  localGame = g;
-
-  // 🎈 [핵심 추가] 게임을 새로 그릴 때 무조건 승자 팝업을 먼저 치워줍니다.
+  localGame=g;
   document.getElementById('winner-overlay').classList.remove('show');
-
-  if(g.phase === 'bust' && prevPhase !== 'bust'){
+  if(g.phase==='bust'&&prevPhase!=='bust'){
     sfxBust();
     const overlay=document.getElementById('bust-overlay');
     const grid=document.getElementById('game-grid');
@@ -1927,30 +1930,41 @@ function renderGame(room){
     setTimeout(()=>{overlay.classList.remove('flash');grid.classList.remove('bust-active');},700);
   }
   prevPhase=g.phase;
-
   renderBoard(g);
   renderPlayers(g,room);
   renderDiceUI(g);
   renderLog(g);
-
   document.getElementById('admin-panel').style.display=(g.host===myId)?'flex':'none';
-
   const cid=g.playerOrder[g.currentTurnIndex];
   const cp=g.players[cid];
   if(!cp) return;
-  
-  // 🎈 [내 턴 알림 로직] 턴이 나에게로 막 넘어왔을 때만 차임벨 소리 재생!
-  if (cid === myId && prevTurnId !== myId) {
+
+  // 내 턴 감지
+  const isMyTurn = cid === myId;
+  const turnChanged = cid !== prevTurnId;
+
+  if (isMyTurn && turnChanged) {
     sfxMyTurn();
+    startTitleBlink();
+    // 타이머 시작
+    if (!g.winner && (g.phase === 'roll' || g.phase === 'choose')) {
+      startTimer(onTimerExpire);
+    }
+  } else if (!isMyTurn) {
+    stopTitleBlink();
+    stopTimer();
   }
-  prevTurnId = cid; // 이번 턴 주인을 기억해둠
+  prevTurnId=cid;
 
   const badge=document.getElementById('turn-badge');
-  badge.textContent=cid===myId?'🎯 내 차례':`${P_ICONS[cp.colorIndex]} ${cp.name}의 차례`;
+  badge.textContent=isMyTurn?'🎯 내 차례':`${P_ICONS[cp.colorIndex]} ${cp.name}의 차례`;
   badge.style.color=`var(${P_COLORS[cp.colorIndex]})`;
   badge.style.borderColor=`var(${P_COLORS[cp.colorIndex]})`;
+  if(isMyTurn) badge.classList.add('my-turn-glow');
+  else badge.classList.remove('my-turn-glow');
 
   if(g.winner){
+    stopTimer();stopTitleBlink();
     const wp=g.players[g.winner];
     document.getElementById('winner-name').textContent=`${P_ICONS[wp.colorIndex]} ${wp.name}`;
     document.getElementById('winner-sub').textContent=`${WIN_COLS}개의 열을 먼저 정복했습니다! 🏔`;
@@ -1973,7 +1987,6 @@ function renderBoard(g){
   const chosen=new Set((g.selectedThisRoll||[]).map(Number));
   const cs=cellSize;
   const numS=Math.max(18,cs-4);
-
   for(let col=2;col<=12;col++){
     const size=COL_SIZES[col];
     const colData=g.columns?.[col]||{positions:{},captured:null};
@@ -1981,15 +1994,12 @@ function renderBoard(g){
     const isClick=isMyTurn&&isChoose&&clickableMap.has(col);
     const adv=clickableMap.get(col)||1;
     const isChosen=chosen.has(col);
-
     const colEl=document.createElement('div');
     colEl.className='column';
-
     for(let pos=size;pos>=1;pos--){
       const cell=document.createElement('div');
       cell.className='cell';
       cell.style.cssText=`width:${cs}px;height:${cs}px;`;
-
       if(colData.captured){
         const ownerId=colData.captured;
         const ci=g.players[ownerId]?.colorIndex??0;
@@ -2005,17 +2015,12 @@ function renderBoard(g){
       } else {
         if(pos===size) cell.classList.add('top-cell');
         if(runnerPos===pos) cell.classList.add('has-runner');
-
-        const pegsHere=Object.entries(colData.positions||{})
-          .filter(([,pp])=>pp===pos).map(([pid])=>pid);
-
+        const pegsHere=Object.entries(colData.positions||{}).filter(([,pp])=>pp===pos).map(([pid])=>pid);
         if(pegsHere.length){
-          const wrap=document.createElement('div');
-          wrap.className='peg-wrap';
+          const wrap=document.createElement('div');wrap.className='peg-wrap';
           wrap.style.cssText=`display:flex;align-items:center;justify-content:center;width:100%;height:100%;gap:1px;flex-wrap:wrap;`;
           pegsHere.forEach(pid=>{
-            const peg=document.createElement('div');
-            peg.className='peg';
+            const peg=document.createElement('div');peg.className='peg';
             const ci=g.players[pid]?.colorIndex??0;
             const sz=pegsHere.length>2?cs*0.38:pegsHere.length>1?cs*0.46:cs*0.6;
             peg.style.cssText=`width:${sz}px;height:${sz}px;`;
@@ -2025,14 +2030,12 @@ function renderBoard(g){
           cell.appendChild(wrap);
         }
         if(runnerPos===pos){
-          const ring=document.createElement('div');
-          ring.className='runner-ring';
+          const ring=document.createElement('div');ring.className='runner-ring';
           cell.appendChild(ring);
         }
       }
       colEl.appendChild(cell);
     }
-
     const numEl=document.createElement('div');
     numEl.className='col-num'+(isClick?' clickable':isChosen?' chosen':'');
     numEl.style.cssText=`width:${numS}px;height:${numS}px;font-size:${Math.max(10,numS*0.55)}px;border-radius:${Math.max(5,numS*0.28)}px;`;
@@ -2043,47 +2046,54 @@ function renderBoard(g){
   }
 }
 
-function renderPlayers(g,room){
+function renderPlayers(g, room){
   const list=document.getElementById('player-list');
   list.innerHTML='';
   const cid=g.playerOrder[g.currentTurnIndex];
   const isHost=g.host===myId;
-  
+
+  // 전체 진행도 계산
+  const totalProgress = (pid) => {
+    let sum = 0, max = 0;
+    Object.entries(COL_SIZES).forEach(([col, size]) => {
+      const colData = g.columns?.[parseInt(col)];
+      if (colData?.captured === pid) { sum += size; max += size; return; }
+      const pos = colData?.positions?.[pid] || 0;
+      sum += pos; max += size;
+    });
+    return max > 0 ? (sum / max) * 100 : 0;
+  };
+
   g.playerOrder.forEach(pid=>{
     const p=g.players[pid];if(!p) return;
     const c=P_COLORS[p.colorIndex];
     const captured=p.capturedCols||[];
-    
+    const pct = totalProgress(pid).toFixed(0);
     const card=document.createElement('div');
     card.className='player-card'+(pid===cid?' active':'');
     card.style.color=`var(${c})`;
-    
-    // 🎈 [핵심!] 이모티콘 말풍선이 찾아갈 수 있도록 아이디(pid)를 카드에 새겨줍니다!
-    card.dataset.pid = pid; 
-    
+    card.dataset.pid=pid;
     const meBadge=pid===myId?`<span class="p-me-badge">나</span>`:'';
     const kickBtn=(isHost&&pid!==myId)?`<button class="kick-btn" onclick="kickPlayer('${pid}','${escAttr(p.name)}')">강퇴</button>`:'';
     const turnArrow=pid===cid?`<span style="font-size:11px;">🎯</span>`:'';
-    
     card.innerHTML=`
       <div class="p-name">
         <span style="font-size:15px;">${P_ICONS[p.colorIndex]}</span>
         <span>${escHtml(p.name)}</span>
         ${meBadge}${turnArrow}${kickBtn}
       </div>
-      <div class="p-score">${captured.length} / ${WIN_COLS} 열 정복</div>
+      <div class="p-score">${captured.length} / ${WIN_COLS} 열 정복 &nbsp;·&nbsp; ${pct}%</div>
       <div class="captured-cols">
         ${captured.map(col=>`<div class="col-badge" style="background:var(${c});">${col}</div>`).join('')}
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" style="width:${pct}%;"></div>
       </div>`;
-      
     list.appendChild(card);
 
-    // 🎈 [핵심 수정] 화면이 새로 그려져도 기존 말풍선 즉시 복구!
-    if (typeof activeBubbles !== 'undefined' && activeBubbles[pid]) {
-      const bubble = document.createElement('div');
-      bubble.className = 'speech-bubble show';
-      bubble.textContent = activeBubbles[pid].text;
-      card.appendChild(bubble);
+    // 말풍선 복원
+    if(activeBubbles[pid]) {
+      _spawnBubble(pid, activeBubbles[pid].text);
     }
   });
 }
@@ -2095,20 +2105,50 @@ function renderDiceUI(g){
   ['d1','d2','d3','d4'].forEach((id,i)=>{
     const el=document.getElementById(id);
     el.textContent=dice[i]||'–';
-    el.style.width=dieS+'px';
-    el.style.height=dieS+'px';
+    el.style.width=dieS+'px';el.style.height=dieS+'px';
     el.style.fontSize=Math.floor(dieS*0.55)+'px';
   });
+
+  // 주사위 조합 힌트
+  const pairsHint=document.getElementById('dice-pairs-hint');
+  pairsHint.innerHTML='';
+
   const rollBtn=document.getElementById('btn-roll');
   const stopBtn=document.getElementById('btn-stop');
   const msg=document.getElementById('dice-msg');
   const hint=document.getElementById('dice-hint');
+
   if(!isMyTurn){
     rollBtn.disabled=true;stopBtn.disabled=true;
     const cp=g.players[g.playerOrder[g.currentTurnIndex]];
     if(cp) msg.textContent=`${P_ICONS[cp.colorIndex]} ${cp.name}의 차례입니다`;
     hint.textContent='';return;
   }
+
+  // 조합 힌트 렌더 (주사위가 굴려진 후)
+  if((g.phase==='choose'||g.phase==='roll')&&dice[0]>0){
+    const pairs=getPairs(dice);
+    // 중복 조합 제거
+    const seen=new Set();
+    pairs.forEach(({x,y})=>{
+      const key=[Math.min(x,y),Math.max(x,y)].join(',');
+      if(seen.has(key)) return;
+      seen.add(key);
+      const canX=canAdvance(x,g.runners||{},g.columns||{},myId);
+      const canY=canAdvance(y,g.runners||{},g.columns||{},myId);
+      const possible=canX||canY;
+      const chip=document.createElement('span');
+      chip.className='pair-chip '+(possible?'possible':'impossible');
+
+      // 선택된 조합 강조
+      const sel=(g.selectedThisRoll||[]).map(Number);
+      if(sel.includes(x)||sel.includes(y)) chip.classList.add('chosen-pair');
+
+      chip.textContent=x===y?`${x}+${x}`:`${x}+${y}`;
+      pairsHint.appendChild(chip);
+    });
+  }
+
   if(g.phase==='roll'){
     rollBtn.disabled=false;
     stopBtn.disabled=Object.keys(g.runners||{}).length===0;
@@ -2121,7 +2161,7 @@ function renderDiceUI(g){
     const sel=g.selectedThisRoll||[];
     const cols=[...new Set(clickable.map(e=>typeof e==='object'?e.col:e))];
     msg.textContent='🏔 전진할 열을 선택하세요';
-    hint.textContent=sel.length===0?`선택 가능한 열: ${cols.join(', ')}`:`열 ${sel[0]} 선택됨 → 두 번째 열을 선택하세요`;
+    hint.textContent=sel.length===0?`선택 가능: ${cols.join(', ')}`:`열 ${sel[0]} 선택됨 → 두 번째 열을 선택하세요`;
   } else if(g.phase==='bust'){
     rollBtn.disabled=true;stopBtn.disabled=true;
     msg.textContent='💥 버스트! 이번 진행이 취소됩니다';
@@ -2156,12 +2196,13 @@ window.addEventListener('load',async()=>{
     try{
       const data=JSON.parse(session);
       roomCode=data.roomCode;myId=data.myId;myName=data.myName;
+      isSpectator=data.isSpectator||false;
       const snap=await get(ref(db,'rooms/'+roomCode));
       if(snap.exists()){
         const room=snap.val();
         const inPlayers=room.players&&room.players[myId];
         const inGame=room.game&&room.game.players&&room.game.players[myId];
-        if(inPlayers||inGame){
+        if(inPlayers||inGame||isSpectator){
           document.getElementById('display-code').textContent=roomCode;
           document.getElementById('game-room-code').textContent=roomCode;
           listenRoom();
@@ -2177,6 +2218,7 @@ async function exitToLobby(){
       await update(ref(db,'rooms/'+roomCode),{status:'waiting',game:null});
     }
   }catch(e){}finally{
+    stopTimer();stopTitleBlink();
     localStorage.removeItem('cantstop_session');location.reload();
   }
 }
