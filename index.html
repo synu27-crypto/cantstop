@@ -1318,16 +1318,6 @@ function sfxChat(){
   }catch(e){}
 }
 
-// 💬 채팅 — 눈 결정 소리
-function sfxChat(){
-  try{
-    const c=getAudio();
-    osc(c,1047,'sine',0.08,0,0.06);
-    osc(c,1319,'sine',0.06,0.05,0.08);
-    osc(c,1568,'sine',0.04,0.1,0.06);
-  }catch(e){}
-}
-
 // 🔔 내 턴 알림음 — 경쾌한 크리스탈 차임벨 (이 부분을 추가!)
 function sfxMyTurn(){
   try{
