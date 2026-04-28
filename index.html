@@ -776,7 +776,11 @@ input[type="text"]:focus{border-color:var(--ice);box-shadow:0 0 0 3px rgba(100,1
   opacity:1;transform:translateX(-50%) scale(1);
 }
 /* 플레이어 카드에 relative 필요 */
-.player-card{position:relative;}
+.player-card{
+  border-radius:10px;padding:10px 12px;
+  border:1.5px solid transparent;transition:all .25s;
+  background:rgba(0,0,0,0.3);position:relative;
+}
 </style>
 </head>
 <body>
@@ -1090,9 +1094,16 @@ function showSpeechBubble(pid, text){
   if(old) old.remove();
   
   const bubble = document.createElement('div');
-  bubble.className = 'speech-bubble show';
+  bubble.className = 'speech-bubble'; // 👈 처음엔 숨긴 상태로 생성
   bubble.textContent = text;
   card.appendChild(bubble);
+
+  // 🎈 화면에 붙인 직후에 show 클래스를 넣어야 부드럽게 튀어나옵니다!
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      bubble.classList.add('show');
+    });
+  });
 }
 
 EMOTIS.forEach(e => {
