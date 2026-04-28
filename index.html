@@ -2037,7 +2037,9 @@ function renderPlayers(g,room){
     const card=document.createElement('div');
     card.className='player-card'+(pid===cid?' active':'');
     card.style.color=`var(${c})`;
-    card.dataset.pid = pid; // 👈 말풍선 위치를 찾기 위한 필수 데이터
+    
+    // 🎈 [핵심!] 이모티콘 말풍선이 찾아갈 수 있도록 아이디(pid)를 카드에 새겨줍니다!
+    card.dataset.pid = pid; 
     
     const meBadge=pid===myId?`<span class="p-me-badge">나</span>`:'';
     const kickBtn=(isHost&&pid!==myId)?`<button class="kick-btn" onclick="kickPlayer('${pid}','${escAttr(p.name)}')">강퇴</button>`:'';
